@@ -1,26 +1,34 @@
 import React from 'react';
-import logo from './logo.svg';
+
+import ElectricityTest from './components/electricity-test.js';
+import HeatTest from './components/heat-test.js';
+import ChemistryTest from './components/chemistry-test.js';
+import SpinnerTest from './components/spinner-test.js';
+import GenerateReport from './containers/report.js';
+import Home from './components/home.js';
+import Tests from './containers/tests.js';
 import './App.css';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const menu = ['Inicio', 'Prueba electricidad', 'Prueba calor', 'Prueba quimico', 'Prueba centrifugado', 'Reporte de muestra']
+    const comp = [<Home/>, <ElectricityTest/>, <HeatTest/>, <ChemistryTest/>, <SpinnerTest/>, <GenerateReport/>]
+
+    return(<div className='fullHeight'>
+        <header className='container-fluid bg-success'></header>
+        <Tests>
+            {menu.map((t, keyT) => {
+                return(<div label={t}>
+                    {comp.map((c, keyC) => {
+                        if(keyT === keyC) {
+                            return(c)
+                        } else {
+                            return null
+                        }
+                    })}
+                </div>)}
+            )}
+        </Tests>
+    </div>)
 }
 
 export default App;
