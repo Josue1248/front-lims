@@ -80,7 +80,7 @@ export default class HeatTest extends React.Component{
             this.updateSamplesMessage('', sampleNumber)
             axios.get(`http://localhost:4000/api/samples/${sample}`)
             .then(res => {
-                if (res.data.message) {
+                if (res.data.estado !== "Muestra lista para prueba de calor" || res.data.message === 'Muestra usada') {
                     this.updateSamplesMessage(res.data.message, sampleNumber)
                     this.updateValidSamples(false, sampleNumber)
                 } else {
@@ -280,15 +280,15 @@ export default class HeatTest extends React.Component{
         const samples = this.state.samples.filter((sample)=>{return ((/MU-\d\d-\d\d\d\d\d/.test(sample) && sample.length === 11))})
    
 		axios.post(`http://localhost:4000/api/test-forms/add`,{
-			operator,
+			operator: operator,
 			test: this.state.name,
             samples: samples,
             attributes:[{
-                name: 'Temperature',
+                name: 'Temperatura',
                 value: temperature
             },
             {
-                name: 'Time elapse',
+                name: 'Tiempo',
                 value: time
             }]
 		})
