@@ -76,7 +76,7 @@ export default class ElectricityTest extends React.Component{
             
             axios.get(`http://localhost:4000/api/samples/${sample}/`)
             .then(res => {
-                if (res.data.estado !== 'Nueva muestra') {
+                if (res.data.estado !== 'Nueva muestra' || res.data.message === 'Muestra usada') {
                         this.updateSamplesMessage('La muestra no es nueva', sampleNumber)
                         this.updateValidSamples(false, sampleNumber)
                 } else {
@@ -196,7 +196,7 @@ export default class ElectricityTest extends React.Component{
         const samples = this.state.samples.filter((sample)=>{return ((/SA-\d\d-\d\d\d\d\d/.test(sample) && sample.length === 11))})
    
 		axios.post(`http://localhost:4000/api/test-forms/add`,{
-			operator,
+			operator: operator,
 			test: this.state.name,
 			samples: samples,
 		})
