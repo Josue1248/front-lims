@@ -73,7 +73,7 @@ export default class HeatTest extends React.Component{
 
     /* Validation of the sample */
     validateSample = (sample, sampleNumber) => {
-        if (!(/SA-\d\d-\d\d\d\d\d/.test(sample)) && sample !== ''){
+        if (!(/MU-\d\d-\d\d\d\d\d/.test(sample)) && sample !== ''){
             this.updateSamplesMessage('Incorrect syntax', sampleNumber)
             this.updateValidSamples(false, sampleNumber)
         } else if(sample === ''){
@@ -81,7 +81,7 @@ export default class HeatTest extends React.Component{
             this.updateValidSamples('', sampleNumber)
         } else {
             this.updateSamplesMessage('', sampleNumber)
-            axios.get(`http://localhost:4000/api/samples/${sample}/${this.state.name}`)
+            axios.get(`http://localhost:4000/api/samples/${sample}`)
             .then(res => {
                 if (res.data.message) {
                     this.updateSamplesMessage(res.data.message, sampleNumber)
@@ -288,7 +288,7 @@ export default class HeatTest extends React.Component{
         const operator = this.state.operator
         const time = this.state.time
         const temperature=this.state.temperature
-        const samples = this.state.samples.filter((sample)=>{return ((/SA-\d\d-\d\d\d\d\d/.test(sample) && sample.length === 11))})
+        const samples = this.state.samples.filter((sample)=>{return ((/MU-\d\d-\d\d\d\d\d/.test(sample) && sample.length === 11))})
    
 		axios.post(`http://localhost:4000/api/test-forms/add`,{
 			operator,
@@ -353,7 +353,7 @@ export default class HeatTest extends React.Component{
             }
         } = this;
 
-        const format = 'SA-##-#####'
+        const format = 'MU-##-#####'
         const regularLabels = 'col-md-12 col-sm-12 col-lg-2 col-xl-2 d-block'
         const inputs = 'col-md-12 col-sm-12 col-lg-5 col-xl-5 form-control'
         const warningLabels = 'col-md-12 col-sm-12 col-lg-10 col-xl-10 text-danger text-center'

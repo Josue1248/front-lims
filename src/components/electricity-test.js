@@ -6,7 +6,7 @@ export default class ElectricityTest extends React.Component{
     constructor(props){
         super(props);
         this.state = {
-            name: 'Prueba de electricidad',           //Name of the test
+            name: 'Prueba de electricidad',     //Name of the test
             operator: 0,                        //State of the operator
             messageOp: '',                      //Message for the operator field
             validOp: undefined,                 //Validation state of the operator
@@ -68,7 +68,7 @@ export default class ElectricityTest extends React.Component{
 
     /* Validation of the sample */
     validateSample = (sample, sampleNumber) => {
-        if (!(/SA-\d\d-\d\d\d\d\d/.test(sample)) && sample !== ''){
+        if (!(/MU-\d\d-\d\d\d\d\d/.test(sample)) && sample !== ''){
             this.updateSamplesMessage('Incorrect syntax', sampleNumber)
             this.updateValidSamples(false, sampleNumber)
         } else if(sample === ''){
@@ -76,11 +76,12 @@ export default class ElectricityTest extends React.Component{
             this.updateValidSamples('', sampleNumber)
         } else {
             this.updateSamplesMessage('', sampleNumber)
-            axios.get(`http://localhost:4000/api/samples/${sample}/Electricity Test`)
+            
+            axios.get(`http://localhost:4000/api/samples/${sample}/`)
             .then(res => {
-                if (res.data.message) {
-                    this.updateSamplesMessage(res.data.message, sampleNumber)
-                    this.updateValidSamples(false, sampleNumber)
+                if (res.data.estado !== 'Nueva muestra') {
+                        this.updateSamplesMessage('La muestra no es nueva', sampleNumber)
+                        this.updateValidSamples(false, sampleNumber)
                 } else {
                     this.state.samples.forEach((value,index)=>{
                         if(sample === value && index !== sampleNumber){

@@ -28,7 +28,7 @@ export default class ChemistryTest extends React.Component{
             this.setState({
                 sample: sample,
             })
-            if(!(/SA-\d\d-\d\d\d\d\d/.test(sample)) && sample !== '') {
+            if(!(/MU-\d\d-\d\d\d\d\d/.test(sample)) && sample !== '') {
                 this.setState({
                     messageSample: 'Incorrect syntax',
                     validSample: false,
@@ -39,17 +39,18 @@ export default class ChemistryTest extends React.Component{
                     validSample: false,
                 })
             } else {
-                axios.get(`http://localhost:4000/api/samples/${sample}/Chemistry Test`)
+                axios.get(`http://localhost:4000/api/samples/${sample}`)
                 .then(res => {
-                    if(res.data.message) {
-                        this.setState({
-                            messageSample:res.data.message,
-                            validSample: false,
-                        })
-                    } else {
+                    console.log(res.data.estado)
+                    if(res.data.estado === 'Muestra lista para prueba de química') {
                         this.setState({
                             messageSample: '',
                             validSample: true,
+                        })
+                    } else {
+                        this.setState({
+                            messageSample: 'La muestra no tiene el estado requerido',
+                            validSample: false,
                         })
                     }
                 })
@@ -212,7 +213,7 @@ export default class ChemistryTest extends React.Component{
             }
         } = this;
 
-        const format = 'SA-##-#####'
+        const format = 'MU-##-#####'
         const regularLabels = 'col-md-12 col-sm-12 col-lg-2 col-xl-2 d-block'
         const inputs = 'col-md-12 col-sm-12 col-lg-5 col-xl-5 form-control'
         const warningLabels = 'col-md-12 col-sm-12 col-lg-10 col-xl-10 text-danger text-center'

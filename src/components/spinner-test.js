@@ -70,7 +70,7 @@ export default class SpinnerTest extends React.Component{
 
     /* Validation of the sample */
     validateSample = (sample, sampleNumber) => {
-        if (!(/SA-\d\d-\d\d\d\d\d/.test(sample)) && sample !== ''){
+        if (!(/MU-\d\d-\d\d\d\d\d/.test(sample)) && sample !== ''){
             this.updateSamplesMessage('Incorrect syntax', sampleNumber)
             this.updateValidSamples(false, sampleNumber)
         } else if(sample === ''){
@@ -227,7 +227,7 @@ export default class SpinnerTest extends React.Component{
 
         const operator = this.state.operator
         const velocity = this.state.velocity
-        const samples = this.state.samples.filter((sample)=>{return ((/SA-\d\d-\d\d\d\d\d/.test(sample) && sample.length === 11))})
+        const samples = this.state.samples.filter((sample)=>{return ((/MU-\d\d-\d\d\d\d\d/.test(sample) && sample.length === 11))})
    
 		axios.post(`http://localhost:4000/api/test-forms/add`,{
 			operator,

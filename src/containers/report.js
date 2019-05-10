@@ -82,7 +82,7 @@ export default class SampleSearch extends React.Component{
             }
         } = this;
 
-        const regularLabels = 'col-md-6 col-sm-12 col-lg-3 col-xl-3 d-block text-right'
+        const regularLabels = 'col-md-4 col-sm-12 col-lg-3 col-xl-3 d-block text-right'
 
         
         return(<div className='content'>
@@ -98,17 +98,15 @@ export default class SampleSearch extends React.Component{
                             value={sample}
                             onChange={addSample}
                             onBlur={validateSample}
-                            />
+                        />
+                        <button
+                            className='ml-1 col-md-2 col-sm-12 col-lg-2 col-xl-2 btn btn-primary'
+                            onClick={handleSearch}
+                            disabled={!validSample}
+                        >
+                        Buscar
+                        </button>
                        </div>
-                <div className='row col-12 justify-content-center form-inline mb-2'>
-                    <button
-                        className='btn btn-primary col-md-6 col-sm-10 col-lg-3'
-                        onClick={handleSearch}
-                        disabled={!validSample}
-                    >
-                    Buscar
-                    </button>
-                </div>
                 <div className='row justify-content-center'>
                     <label className={'col-lg-12 col-sm-12 col-md-12 text-center text-danger mt-3'}><p className='Danger'>{messageAPI}</p></label>
 					</div>
@@ -117,7 +115,7 @@ export default class SampleSearch extends React.Component{
             <div>
 				{
 					this.state.logs && this.state.logs.length === 0 ? ('') : (
-						<ResponsiveTable title='Sample logs' cols={{
+						<ResponsiveTable title='Estados' cols={{
 							Operador: 'Operador',
 							Muestra: 'Muestra',
 							Estado: 'Estado',
@@ -128,7 +126,7 @@ export default class SampleSearch extends React.Component{
 				}
 				{
 					this.state.attributes && this.state.attributes.length === 0 ? ('') : (
-						<ResponsiveTable title='Sample attributes' cols={{
+						<ResponsiveTable title='Atributos' cols={{
 							Atributo: 'Atributo',
 							Valor: 'Valor'
 						}} rows={this.state.attributes}/>
