@@ -24,7 +24,6 @@ export default class HeatTest extends React.Component{
         }
     }
 
-    /* Update the samples in their position in the array */
     updateSamples=(value, position)=>{
         this.setState((state)=>{
             let samples = state.samples.map((sample, index)=>{
@@ -40,7 +39,6 @@ export default class HeatTest extends React.Component{
         })
     }
 
-    /* Update the samples messages in their position in the array */
     updateSamplesMessage=(value, position)=>{
         this.setState((state)=>{
             const messageSamples = state.messageSamples.map((message, index)=>{
@@ -71,7 +69,6 @@ export default class HeatTest extends React.Component{
         })
     }
 
-    /* Validation of the sample */
     validateSample = (sample, sampleNumber) => {
         if (!(/MU-\d\d-\d\d\d\d\d/.test(sample)) && sample !== ''){
             this.updateSamplesMessage('Incorrect syntax', sampleNumber)
@@ -160,8 +157,6 @@ export default class HeatTest extends React.Component{
         }
     }
 
-
-    /* Add the sample from the input to the array, limiting the length of the value */
     handleSample=(e)=>{
         const sampleNumber = parseInt(e.target.name.replace('sample',''),10)
         const sample = e.target.value
@@ -173,7 +168,6 @@ export default class HeatTest extends React.Component{
         }
     }
 
-    /* Clear the inputs */
     clearSamples=(sampleNumber)=>{
         if(sampleNumber < this.state.samples.length) {
             this.updateSamples('', sampleNumber)
@@ -188,7 +182,6 @@ export default class HeatTest extends React.Component{
         }
     }
 
-    /* Handle the blanks inputs */
     handleBlanks=(e)=>{
         const sampleNumber = parseInt(e.target.name.replace('sample',''),10)
         const sample = e.target.value
@@ -199,7 +192,6 @@ export default class HeatTest extends React.Component{
         }
     }
 
-    /* Add the operator number and validate it */
     handleOperator=(e)=>{
         const operator = e.target.value
 
@@ -275,9 +267,6 @@ export default class HeatTest extends React.Component{
         }
     }
 
-
-
-    /* Submit of the sample */
     handleSubmit = (event) => {
         event.preventDefault();
 
