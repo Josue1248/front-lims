@@ -42,7 +42,7 @@ export default class ChemistryTest extends React.Component{
                 axios.get(`http://localhost:4000/api/samples/${sample}`)
                 .then(res => {
                     console.log(res.data.estado)
-                    if(res.data.estado === 'Muestra lista para prueba de química') {
+                    if(res.data.estado === 'Muestra lista para prueba de química' || res.data.message === 'Muestra usada') {
                         this.setState({
                             messageSample: '',
                             validSample: true,
@@ -151,11 +151,11 @@ export default class ChemistryTest extends React.Component{
             loading:true
         })
         axios.post(`http://localhost:4000/api/test-forms/add`,{
-            operator,
+            operator: operator,
             test: this.state.name,
             samples: [sample],
             attributes:[{
-                name: 'Chemistry',
+                name: 'Quimico',
                 value: chemistry
             }]
         })
