@@ -17,12 +17,19 @@ export default class ElectricityTest extends React.Component{
             messageAPI: '',
             loading: false,
         }
+
+        this.handleSample = this.handleSample.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleOperator = this.handleOperator.bind(this);
+        this.updateSamples = this.updateSamples.bind(this);
+        this.handleSamplesMessage = this.handleSamplesMessage.bind(this);
+        this.handleRegex = this.handleRegex.bind(this);
     }
     
-    updateSamples=(value, position)=>{
-        this.setState((state)=>{
-            let samples = state.samples.map((sample, index)=>{
-                if(position === index){
+    updateSamples(value, position) {
+        this.setState((state) => {
+            let samples = state.samples.map((sample, index) => {
+                if(position === index) {
                     return sample = value
                 } else {
                     return sample;
@@ -34,10 +41,21 @@ export default class ElectricityTest extends React.Component{
         })
     }
 
-    updateSamplesMessage=(value, position)=>{
-        this.setState((state)=>{
-            const messageSamples = state.messageSamples.map((message, index)=>{
-                if(index === position){
+    handleSample(e) {
+        const sampleNumber = parseInt(e.target.name.replace('sample',''),10)
+        const sample = e.target.value
+
+        this.handleValidSamples(0)
+        if(sample.length <= 11){
+            this.updateSamples(sample,sampleNumber - 1)
+            this.validateSample(sample,sampleNumber - 1)
+        }
+    }
+
+    handleSamplesMessage(value, position) {
+        this.setState((state) => {
+            const messageSamples = state.messageSamples.map((message, index) => {
+                if(index === position) {
                     return message = value
                 } else {
                     return message;
@@ -49,10 +67,10 @@ export default class ElectricityTest extends React.Component{
         })
     }
 
-    updateValidSamples=(value, position)=>{
-        this.setState((state)=>{
-            const rightSamples = state.rightSamples.map((status, index)=>{
-                if(index === position){
+    updateValidSamples(value, position) {
+        this.setState((state) => {
+            const rightSamples = state.rightSamples.map((status, index) => {
+                if(index === position) {
                     return status = value
                 } else {
                     return status;
@@ -64,25 +82,32 @@ export default class ElectricityTest extends React.Component{
         })
     }
 
-    validateSample = (sample, sampleNumber) => {
-        if (!(/MU-\d\d-\d\d\d\d\d/.test(sample)) && sample !== ''){
-            this.updateSamplesMessage('Incorrect syntax', sampleNumber)
+    handleRegex(){
+        if (!(/MU-\d\d-\d\d\d\d\d/.test(sample)) && sample !== '') {
+            this.handleSamplesMessage('Incorrect syntax', sampleNumber)
             this.updateValidSamples(false, sampleNumber)
-        } else if(sample === ''){
-            this.updateSamplesMessage('', sampleNumber)
+            return false
+        } else {
+            return true
+        }
+    }
+
+    validateSample = (sample, sampleNumber) => {
+        if(sample === ''){
+            this.handleSamplesMessage('', sampleNumber)
             this.updateValidSamples('', sampleNumber)
         } else {
-            this.updateSamplesMessage('', sampleNumber)
+            this.handleSamplesMessage('', sampleNumber)
             
             axios.get(`http://localhost:4000/api/samples/${sample}/`)
             .then(res => {
                 if (res.data.estado !== 'Nueva muestra' || res.data.message === 'Muestra usada') {
-                        this.updateSamplesMessage('La muestra no es nueva', sampleNumber)
+                        this.handleSamplesMessage('La muestra no es nueva', sampleNumber)
                         this.updateValidSamples(false, sampleNumber)
                 } else {
                     this.state.samples.forEach((value,index)=>{
                         if(sample === value && index !== sampleNumber){
-                            this.updateSamplesMessage('This sample is repeated', sampleNumber)
+                            this.handleSamplesMessage('This sample is repeated', sampleNumber)
                             this.updateValidSamples(false, sampleNumber)
                         }
                     })
@@ -103,7 +128,6 @@ export default class ElectricityTest extends React.Component{
                 })
                 this.validateSample(this.state.samples[sampleNumber], sampleNumber)
             } else if(this.state.rightSamples[sampleNumber] === ''){
-                console.log('nothing')
                 this.handleValidSamples(sampleNumber + 1)
             } else {
                 this.setState({
@@ -114,7 +138,7 @@ export default class ElectricityTest extends React.Component{
         }
     }
 
-    handleSample=(e)=>{
+    handleSample(e) {
         const sampleNumber = parseInt(e.target.name.replace('sample',''),10)
         const sample = e.target.value
 
@@ -125,10 +149,10 @@ export default class ElectricityTest extends React.Component{
         }
     }
 
-    clearSamples=(sampleNumber)=>{
+    clearSamples = (sampleNumber) => {
         if(sampleNumber < this.state.samples.length) {
             this.updateSamples('', sampleNumber)
-            this.updateSamplesMessage('', sampleNumber)
+            this.handleSamplesMessage('', sampleNumber)
             this.updateValidSamples('', sampleNumber)
             this.clearSamples(sampleNumber + 1)
             if(sampleNumber === 1){
@@ -139,7 +163,7 @@ export default class ElectricityTest extends React.Component{
         }
     }
 
-    handleBlanks=(e)=>{
+    handleBlanks(e) {
         const sampleNumber = parseInt(e.target.name.replace('sample',''),10)
         const sample = e.target.value
 
@@ -149,7 +173,7 @@ export default class ElectricityTest extends React.Component{
         }
     }
 
-    handleOperator=(e)=>{
+    handleOperator(e) {
         const operator = e.target.value
 
         if(/[1-99999]/.test(operator) && operator.length <= 5){
@@ -184,7 +208,7 @@ export default class ElectricityTest extends React.Component{
         }
     }
 
-    handleSubmit = (event) => {
+    handleSubmit(event) {
         event.preventDefault();
 
         this.setState({
