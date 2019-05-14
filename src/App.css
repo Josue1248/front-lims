@@ -1,6 +1,15 @@
+/*
+    Rojo: #FF4858
+    Verde: #1B7F79
+    Verde oscuro: #00CCC0
+    Verde: #00CCC0
+    Verde claro: #72F2EB
+    Gris: #747F7F
+*/
+
 button[disabled]:hover {
-	border-color: #dc3545;
-	background: #dc3545;
+	border-color: #747F7F;
+	background: #747F7F;
 }
 
 h1,h2,h3 {
@@ -33,6 +42,16 @@ nav ul{
 }
 .appLogo{
 	height: 3rem;
+}
+
+.bg-color{
+	background: #1B7F79;
+}
+
+.button{
+	color: #fff;
+	background: #00CCC0;
+	border-color: #00CCC0
 }
 
 .buttonImage{
@@ -72,8 +91,8 @@ nav ul{
 	border: none;
 }
 
-#succes{
-    color: #28a745;
+#success{
+    color: #00CCC0;
 }
 
 #spinner{

@@ -401,16 +401,16 @@ export default class ElectricityTest extends React.Component{
                     <div className='row justify-content-center'>
 					<button
                         type='submit'
-                        className='btn btn-success col-md-6 col-sm-10 col-lg-3'
+                        className='btn button col-md-6 col-sm-10 col-lg-3'
                         disabled={(this.state.validSamples && this.state.validOp) ? false : true}
-                        title={(this.state.validSamples && this.state.validOp) ? 'Form is ready' : 'Form not ready'}
+                        title={(this.state.validSamples && this.state.validOp) ? 'La forma esta lista' : 'La forma no esta lista'}
                     >
                     Guardar
                     {(this.state.loading) ? <img src='/images/spinner.gif' alt='loading' id='spinner'/> : ''}
                     </button>
 					</div>
 					<div className='row justify-content-center'>
-					<label id='succes' className={'col-lg-3 col-sm-10 text-center col-md-6  mt-3'}>
+					<label id='success' className={'col-lg-3 col-sm-10 text-center col-md-6  mt-3'}>
                     {this.state.messageAPI}
                     </label>
 					</div>

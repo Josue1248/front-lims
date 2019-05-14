@@ -100,7 +100,7 @@ export default class SampleSearch extends React.Component{
                             onBlur={validateSample}
                         />
                         <button
-                            className='ml-1 col-md-2 col-sm-12 col-lg-2 col-xl-2 btn btn-primary'
+                            className='ml-1 col-md-2 col-sm-12 col-lg-2 col-xl-2 btn button'
                             onClick={handleSearch}
                             disabled={!validSample}
                         >

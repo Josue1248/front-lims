@@ -471,14 +471,14 @@ export default class HeatTest extends React.Component{
                         </div>
                     </div>
 					<div className='row justify-content-center'>
-                    <label className={'col-lg-3 col-sm-10 text-center col-md-6  mt-3'}><p id='succes'>{messageAPI}</p></label>
+                    <label className={'col-lg-3 col-sm-10 text-center col-md-6  mt-3'}><p id='success'>{messageAPI}</p></label>
 					</div>
 					<div className='row justify-content-center'>
                     <button
                         type='submit'
-                        className='btn btn-success col-md-6 col-sm-10 col-lg-3'
+                        className='btn button col-md-6 col-sm-10 col-lg-3'
                         disabled={(validOp && validTemp && validTime && validSamples) ? false : true}
-                        title={(validSamples && validOp) ? 'Form is ready' : 'Form not ready'}
+                        title={(this.state.validSamples && this.state.validOp) ? 'La forma esta lista' : 'La forma no esta lista'}
                     >
                     Guardar
                     {(this.state.loading) ? <img src='/images/spinner.gif' alt='loading' id='spinner'/> : ''}

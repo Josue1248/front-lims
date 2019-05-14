@@ -26,9 +26,9 @@ export default class Tests extends React.Component {
     } = this;
 
     return (<div className='fullHeight row m-0' >
-        <nav className = 'col-lg-2 col-xl-2 col-md-12 col-sm-12 fixed-top bg-success' id='menuMobilDiv'>
+        <nav className = 'col-lg-2 col-xl-2 col-md-12 col-sm-12 fixed-top bg-color' id='menuMobilDiv'>
             <div className='breadcrumb'>
-                <div className='appLogoName bg-success w-100'>
+                <div className='appLogoName bg-color w-100'>
                     <img src="images/mini-logo.png" className="appLogo pl-4" alt="lims logo"/>
                     <h1 className='text-white pl-1'>LIMS</h1>
                 </div>

@@ -14,7 +14,7 @@ function App() {
     const comp = [<Home/>, <ElectricityTest/>, <HeatTest/>, <ChemistryTest/>, <SpinnerTest/>, <GenerateReport/>]
 
     return(<div className='fullHeight'>
-        <header className='container-fluid bg-success'></header>
+        <header className='container-fluid bg-color'></header>
         <Tests>
             {menu.map((t, keyT) => {
                 return(<div label={t}>
