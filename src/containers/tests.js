@@ -29,8 +29,8 @@ export default class Tests extends React.Component {
         <nav className = 'col-lg-2 col-xl-2 col-md-12 col-sm-12 fixed-top bg-color' id='menuMobilDiv'>
             <div className='breadcrumb'>
                 <div className='appLogoName bg-color w-100'>
-                    <img src="images/mini-logo.png" className="appLogo pl-4" alt="lims logo"/>
-                    <h1 className='text-white pl-1'>LIMS</h1>
+                    <h1 className='text-white pl-5'>LIMS</h1>
+                    <img src="images/mini-logo.png" className="appLogo pl-1" alt="lims logo"/>
                 </div>
                 <div>
                 <ul className='m-0'>

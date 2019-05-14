@@ -6,7 +6,7 @@ export default class SpinnerTest extends React.Component{
     constructor(props){
         super(props);
         this.state={
-            name: 'Prueba de centrifuga',
+            name: 'Prueba de centrífuga',
             operator: 0,
             messageOp: '',
             validOp: undefined,
@@ -322,8 +322,8 @@ export default class SpinnerTest extends React.Component{
         }
 
         return(<div className='row justify-content-center m-0'>
-            <div className='col-lg-4 col-sm-12 m-4'>
-                <h1 className='text-center'>{name}</h1>
+            <div className='col-12 m-4'>
+                <h1 className='text-center'>{this.state.name}</h1>
             </div>
             <div className='col-sm-12 col-xl-10'>
                 <form  onSubmit={handleSubmit}>
