@@ -18,14 +18,16 @@ export default class ElectricityTest extends React.Component{
         }
 
         this.handleSample = this.handleSample.bind(this);
-        this.handleSampleStatus = this.handleSampleStatus.bind(this);
         this.handleUpdateSamples = this.handleUpdateSamples.bind(this);
         this.handleSamplesMessage = this.handleSamplesMessage.bind(this);
-        this.handleRepeatedSamples = this.handleRepeatedSamples.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-        this.handleOperator = this.handleOperator.bind(this);
         this.handleRegex = this.handleRegex.bind(this);
+        this.handleRepeatedSamples = this.handleRepeatedSamples.bind(this);
+        this.handleSampleStatus = this.handleSampleStatus.bind(this);
+        this.handleValidateSamples = this.handleValidateSamples.bind(this);
+        this.handleBlanks = this.handleBlanks.bind(this);
         this.handleOnBlur = this.handleOnBlur.bind(this);
+        this.handleOperator = this.handleOperator.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
     
     handleUpdateSamples(value, position) {
@@ -63,66 +65,91 @@ export default class ElectricityTest extends React.Component{
         const sample = e.target.value
 
         if(sample.length <= 11){
-            this.handleUpdateSamples(sample,sampleNumber - 1)
+            this.handleUpdateSamples(sample, sampleNumber - 1)
         }
     }
 
-    handleRegex(e){
-        // const sampleNumber = parseInt(e.target.name.replace('sample',''), 10)
-        // const sample = e.target.value
-
-        // if (!(/MU-\d\d-\d\d\d\d\d/.test(sample)) && sample !== '') {
-        //     this.handleSamplesMessage('Incorrect syntax', sampleNumber)
-        //     return false
-        // } else {
-        //     this.handleSamplesMessage('', sampleNumber)
-        //     return true
-        // }
+    handleRegex(sample, sampleNumber) {
+        if (!(/MU-\d\d-\d\d\d\d\d/.test(sample)) && sample !== '') {
+            this.handleSamplesMessage('Incorrect syntax', sampleNumber)
+            return false
+        } else {
+            this.handleSamplesMessage('', sampleNumber)
+            return true
+        }
     }
 
     handleSampleStatus(sample, sampleNumber) {
-            // axios.get(`http://localhost:4000/api/samples/${sample}`)
-            // .then(res => {
-            //     if (res.data.estado !== 'Nueva muestra' || res.data.message === 'Muestra usada') {
-            //         this.handleSamplesMessage('La muestra no es nueva', sampleNumber)
-            //     } else {
-            //         this.handleSamplesMessage('', sampleNumber)
-            //     }
-            // })
-            // .catch( () => {
-            //     alert('Conection Timed Out');
-            // });
-    }
-
-    handleOnBlur(e){
-        const sampleNumber = parseInt(e.target.name.replace('sample',''), 10) - 1
-        const sample = e.target.value
-
-        // console.log(sample + sampleNumber);
-        this.handleSampleStatus(sample, sampleNumber)
-        this.handleRepeatedSamples(sample, sampleNumber)
-    }
-
-    handleRepeatedSamples(sample, sampleNumber){
-        if (sampleNumber <= this.state.samples.length){
-            if (sample === this.state.samples[sampleNumber]){
-                this.handleSamplesMessage('Esta muestra esta repetida', sampleNumber)
-                return
-            } else {
-                if(this.state.samples[sampleNumber] !==''){
-                    this.handleRepeatedSamples(sample, sampleNumber + 1)
+            axios.get(`http://localhost:4000/api/samples/${sample}`)
+            .then(res => {
+                if (res.data.estado !== 'Nueva muestra' || res.data.message === 'Muestra usada') {
+                    this.handleSamplesMessage('La muestra no es nueva', sampleNumber)
+                    this.setState({
+                        validSamples: false
+                    })
                 } else {
-                    return
+                    this.handleSamplesMessage('', sampleNumber)
+                    this.setState({
+                        validSamples: true
+                    })
                 }
+            })
+            .catch( () => {
+                alert('Conection Timed Out');
+            });
+    }
+
+    handleValidateSamples(sample, sampleNumber) {
+        if(this.handleRegex(sample, sampleNumber)){
+            const isNotRepeated = this.handleRepeatedSamples(sample, sampleNumber, 0)
+
+            if(isNotRepeated){
+                this.handleSampleStatus(sample, sampleNumber)
+            } else {
+                this.setState({
+                    validSamples: false
+                })
             }
         } else {
-            return
+            this.setState({
+                validSamples: false
+            })
         }
     }
 
-    clearSamples = (sampleNumber) => {
-        if(sampleNumber < this.state.samples.length) {
+    handleOnBlur(e) {
+        const sampleNumber = parseInt(e.target.name.replace('sample',''), 10) - 1
+        const sample = e.target.value
 
+        if(sample !== '') {
+            this.handleValidateSamples(sample, sampleNumber)
+        } else {
+            this.handleBlanks(sampleNumber)
+        }
+    }
+
+    handleRepeatedSamples(sample, sampleNumber, index) {
+        if (index <= this.state.samples.length){
+            if (sample === this.state.samples[index] && (index !== sampleNumber && index < sampleNumber)){
+                this.handleSamplesMessage('Esta muestra esta repetida', sampleNumber)
+                return false
+            } else {
+                this.handleSamplesMessage('', sampleNumber)
+                this.handleRepeatedSamples(sample, sampleNumber, index + 1)
+                return true
+            }
+        } else {
+            return true
+        }
+    }
+
+    handleBlanks(sampleNumber) {
+        if(sampleNumber <= this.state.samples.length) {
+            this.handleUpdateSamples(this.state.samples[sampleNumber + 1], sampleNumber )
+            this.handleSamplesMessage(this.state.messageSamples[sampleNumber + 1], sampleNumber)
+            this.handleBlanks(sampleNumber + 1)
+        } else {
+            return
         }
     }
 
