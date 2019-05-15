@@ -105,8 +105,8 @@ export default class HeatTest extends React.Component{
     handleSampleStatus(sample, sampleNumber) {
         axios.get(`http://localhost:4000/api/samples/${sample}`)
         .then(res => {
-            if (res.data.estado !== 'Nueva muestra' || res.data.message === 'Muestra usada') {
-                this.handleSamplesMessage('La muestra no es nueva', sampleNumber)
+            if (res.data.estado !== 'Muestra lista para prueba de calor' || res.data.message === 'Muestra usada') {
+                this.handleSamplesMessage('La muestra no tiene el estado requerido', sampleNumber)
                 this.setState({
                     validSamples: false
                 })
@@ -265,7 +265,6 @@ export default class HeatTest extends React.Component{
 		.then( res=> {
 			if (res.data.message === 'Insertion completed') {
 				this.setState({
-					operator: 0, 
                     samples: Array(10).fill(''),
                     rightSamples: Array(10).fill(false),
 					messageAPI: res.data.message,
