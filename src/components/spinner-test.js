@@ -218,7 +218,8 @@ export default class SpinnerTest extends React.Component{
             attributes:[{
                 name: 'Velocidad',
                 value: velocity
-            }]
+            }],
+            states: ["Prueba de centrifugadora pasada", "Muestra utilizada"]
 		
 		})
 		.then( res=> {
