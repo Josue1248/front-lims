@@ -7,24 +7,38 @@ export default class SpinnerTest extends React.Component{
         super(props);
         this.state={
             name: 'Prueba de centrífuga',
-            operator: 0,
+            operator: '',
             messageOp: '',
             validOp: undefined,
-            velocity: 0,
+            velocity: '',
             messageVel: '',
             validVel: undefined,
             samples: Array(10).fill(''),
             messageSamples: Array(10).fill(''),
-            rightSamples: Array(10).fill(''),
-            handleValidSamples: undefined,
+            validSamples: undefined,
             loading: false,
+            messageAPI: ''
         }
+
+        this.handleSample = this.handleSample.bind(this);
+        this.handleUpdateSamples = this.handleUpdateSamples.bind(this);
+        this.handleSamplesMessage = this.handleSamplesMessage.bind(this);
+        this.handleRegex = this.handleRegex.bind(this);
+        this.handleRepeatedSamples = this.handleRepeatedSamples.bind(this);
+        this.handleSampleStatus = this.handleSampleStatus.bind(this);
+        this.handleValidateSamples = this.handleValidateSamples.bind(this);
+        this.handleBlanks = this.handleBlanks.bind(this);
+        this.handleOnBlur = this.handleOnBlur.bind(this);
+        this.handleOperator = this.handleOperator.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleVelocity = this.handleVelocity.bind(this);
+        this.handleValidateVelocity = this.handleValidateVelocity.bind(this);
     }
 
-    updateSamples=(value, position)=>{
-        this.setState((state)=>{
-            let samples = state.samples.map((sample, index)=>{
-                if(position === index){
+    handleUpdateSamples(value, position) {
+        this.setState((state) => {
+            let samples = state.samples.map((sample, index) => {
+                if(position === index) {
                     return sample = value
                 } else {
                     return sample;
@@ -36,10 +50,10 @@ export default class SpinnerTest extends React.Component{
         })
     }
 
-    updateSamplesMessage=(value, position)=>{
-        this.setState((state)=>{
-            const messageSamples = state.messageSamples.map((message, index)=>{
-                if(index === position){
+    handleSamplesMessage(value, position) {
+        this.setState((state) => {
+            const messageSamples = state.messageSamples.map((message, index) => {
+                if(index === position) {
                     return message = value
                 } else {
                     return message;
@@ -51,167 +65,143 @@ export default class SpinnerTest extends React.Component{
         })
     }
 
-    updateValidSamples=(value, position)=>{
-        this.setState((state)=>{
-            const rightSamples = state.rightSamples.map((status, index)=>{
-                if(index === position){
-                    return status = value
-                } else {
-                    return status;
-                }
-            })
-            return {
-                rightSamples,
-            };
-        })
+    handleSample(e) {
+        const sampleNumber = parseInt(e.target.name.replace('sample',''), 10)
+        const sample = e.target.value
+
+        if(sample.length <= 11){
+            this.handleUpdateSamples(sample, sampleNumber - 1)
+        }
     }
 
-    validateSample = (sample, sampleNumber) => {
-        if (!(/MU-\d\d-\d\d\d\d\d/.test(sample)) && sample !== ''){
-            this.updateSamplesMessage('Incorrect syntax', sampleNumber)
-            this.updateValidSamples(false, sampleNumber)
-        } else if(sample === ''){
-            this.updateSamplesMessage('', sampleNumber)
-            this.updateValidSamples('', sampleNumber)
+    handleRegex(sample, sampleNumber) {
+        if (!(/MU-\d\d-\d\d\d\d\d/.test(sample)) && sample !== '') {
+            this.handleSamplesMessage('Incorrect syntax', sampleNumber)
+            return false
         } else {
-            this.updateSamplesMessage('', sampleNumber)
+            this.handleSamplesMessage('', sampleNumber)
+            return true
+        }
+    }
+
+    handleSampleStatus(sample, sampleNumber) {
             axios.get(`http://localhost:4000/api/samples/${sample}`)
             .then(res => {
-                if (res.data.estado !== "Muestra lista para prueba de centrifuga" || res.data.message === 'Muestra usada') {
-                    this.updateSamplesMessage(res.data.message, sampleNumber)
-                    this.updateValidSamples(false, sampleNumber)
+                if (res.data.estado !== 'Muestra lista para prueba de centrifugado' || res.data.message === 'Muestra usada') {
+                    this.handleSamplesMessage('La muestra no tiene el estado requerido', sampleNumber)
+                    this.setState({
+                        validSamples: false
+                    })
                 } else {
-                    this.state.samples.forEach((value,index)=>{
-                        if(sample === value && index !== sampleNumber){
-                            this.updateSamplesMessage('This sample is repeated', sampleNumber)
-                            this.updateValidSamples(false, sampleNumber)
-                        }
+                    this.handleSamplesMessage('', sampleNumber)
+                    this.setState({
+                        validSamples: true
                     })
                 }
             })
             .catch( () => {
                 alert('Conection Timed Out');
             });
-            this.updateValidSamples(true, sampleNumber)
-        }
     }
 
-    handleValidSamples = (sampleNumber) => {
-        if(sampleNumber < this.state.samples.length){
-            if(this.state.rightSamples[sampleNumber] === false) {
-                this.setState({
-                    validSamples: false,
-                })
-                this.validateSample(this.state.samples[sampleNumber], sampleNumber)
-            } else if(this.state.rightSamples[sampleNumber] === ''){
-                console.log('nothing')
+    handleValidateSamples(sample, sampleNumber) {
+        if(this.handleRegex(sample, sampleNumber)){
+            const isNotRepeated = this.handleRepeatedSamples(sample, sampleNumber, 0)
+
+            if(isNotRepeated){
+                this.handleSampleStatus(sample, sampleNumber)
             } else {
                 this.setState({
-                    validSamples: true,
+                    validSamples: false
                 })
-                this.handleValidSamples(sampleNumber + 1)
             }
+        } else {
+            this.setState({
+                validSamples: false
+            })
         }
     }
 
-    handleSample=(e)=>{
-        const sampleNumber = parseInt(e.target.name.replace('sample',''),10)
+    handleOnBlur(e) {
+        const sampleNumber = parseInt(e.target.name.replace('sample',''), 10) - 1
         const sample = e.target.value
 
-        this.handleValidSamples(0)
-        if(sample.length <= 11){
-            this.updateSamples(sample,sampleNumber - 1)
-            this.validateSample(sample,sampleNumber - 1)
+        if(sample !== '') {
+            this.handleValidateSamples(sample, sampleNumber)
+        } else {
+            this.handleBlanks(sampleNumber)
         }
     }
 
-    clearSamples=(sampleNumber)=>{
-        if(sampleNumber < this.state.samples.length) {
-            this.updateSamples('', sampleNumber)
-            this.updateSamplesMessage('', sampleNumber)
-            this.updateValidSamples('', sampleNumber)
-            this.clearSamples(sampleNumber + 1)
-            if(sampleNumber === 1){
-                this.setState({
-                    validSamples: false,
-                })
+    handleRepeatedSamples(sample, sampleNumber, index) {
+        if (index <= this.state.samples.length){
+            if (sample === this.state.samples[index] && (index !== sampleNumber && index < sampleNumber)){
+                this.handleSamplesMessage('Esta muestra esta repetida', sampleNumber)
+                return false
+            } else {
+                this.handleSamplesMessage('', sampleNumber)
+                this.handleRepeatedSamples(sample, sampleNumber, index + 1)
+                return true
             }
+        } else {
+            return true
         }
     }
 
-
-    handleVelocity = (event) => {
-        const velocity = event.target.value
+    handleBlanks(sampleNumber) {
+        if(sampleNumber <= this.state.samples.length) {
+            if (sampleNumber < this.state.samples.length - 1) {
+                this.handleUpdateSamples(this.state.samples[sampleNumber + 1], sampleNumber)
+                this.handleSamplesMessage(this.state.messageSamples[sampleNumber + 1], sampleNumber)
+                this.handleBlanks(sampleNumber + 1)
+            } else if(sampleNumber === this.state.samples.length - 1){
+                this.handleUpdateSamples('', sampleNumber)
+                this.handleSamplesMessage('', sampleNumber)
+                return
+            }
+        } else {
+            return
+        }
+    }
+    
+    handleVelocity(e) {
+        const velocity = e.target.value
 
         if(velocity.length <= 5) {
-            this.setState({ 
+            this.setState({
                 velocity: velocity,
             });
-            if(velocity.length>0) {
-                this.setState({
-                    validVel: true,
-                    messageVel: '',
-                })
-            } else if(this.state.velocity === '') {
-                this.setState({
-                    messageVel: 'Cant be Blank',
-                    validVel: false,
-                })
-            } else {
-                this.setState({
-                    validSamples: false,
-                })
-            }
         }
     }
 
-    handleBlanks=(e)=>{
-        const sampleNumber = parseInt(e.target.name.replace('sample',''),10)
-        const sample = e.target.value
+    handleValidateVelocity(e) {
+        const velocity = e.target.value
 
-        this.handleValidSamples(0)
-        if(sample === ''){
-            this.clearSamples(sampleNumber)
+        if(velocity <= 0) {
+            this.setState({
+                messageVel: 'El valor no puede ser 0',
+                validVel: false
+            });
+        } else {
+            this.setState({
+                messageVel: '',
+                validVel: true
+            });
         }
     }
 
-    handleOperator=(e)=>{
+    handleOperator(e) {
         const operator = e.target.value
 
-        if(/[1-99999]/.test(operator) && operator.length <= 5){
-            axios.get(`http://localhost:4000/api/operators/` + operator) 
-            .then(res => {
-                if (res.data.message) { 
-                    this.setState({
-                        messageOp: 'The operator doesn\'t exist',
-                        validOp: false,
-                    })
-                } else  {
-                    this.setState({
-                        operator: operator,
-                        messageOp: '',
-                        validOp: true,
-                    })
-                }
-            })
-            .catch( () => {
-                alert('Conection Timed Out');
-            });
-        }else if(operator === ''){
+        if(operator.length <= 5){
             this.setState({
-                messageOp: 'Field can\'t be blank', //that's racist
-                validOp: undefined,
-            })
-        }else{
-            this.setState({
-                validOp: false,
-                messageOp: 'Invalid Syntax',
+                operator: operator,
             })
         }
     }
 
-    handleSubmit = (event) => {
-        event.preventDefault();
+    handleSubmit(e) {
+        e.preventDefault();
 
         this.setState({
             loading:true
@@ -234,9 +224,7 @@ export default class SpinnerTest extends React.Component{
 		.then( res=> {
 			if (res.data.message === 'Insertion completed') {
 				this.setState({
-					operator: 0, 
                     samples: Array(10).fill(''),
-                    rightSamples: Array(10).fill(false),
 					messageAPI: res.data.message,
 					validSamples: false,
 					loading: false
@@ -256,258 +244,193 @@ export default class SpinnerTest extends React.Component{
 		});
     }
 
-    handleVelocity = (event) => {
-        const velocity = event.target.value
-
-        if(velocity.length <= 5) {
-            this.setState({ 
-                velocity: velocity,
-            });
-            if(velocity.length>0) {
-                this.setState({
-                    validVel: true,
-                    messageVel: '',
-                })
-            } else if(this.state.velocity === '') {
-                this.setState({
-                    messageVel: 'Cant be Blank',
-                    validVel: false,
-                })
-            } else {
-                this.setState({
-                    messageVel: 'Must be no more than 5 digits',
-                    validVel: false,
-                })
-            }
-        }
-
-    }
-
     render() {
-        const {
-            handleSubmit,
-            handleSample,
-            handleVelocity,
-            handleOperator,
-            handleBlanks,
-            state: {
-                name,
-                messageOp,
-                validOp,
-                velocity,
-                messageVel,
-                validVel,
-                samples,
-                messageSamples,
-                rightSamples,
-                validSamples,
-                messageAPI,
-            }
-        } = this;
-
         const format = 'MU-##-#####'
         const regularLabels = 'col-md-12 col-sm-12 col-lg-2 col-xl-2 d-block'
         const inputs = 'col-md-12 col-sm-12 col-lg-5 col-xl-5 form-control'
         const warningLabels = 'col-md-12 col-sm-12 col-lg-10 col-xl-10 text-danger text-center'
-
-        let operatorInput = inputs;
-
-        if(validOp === false){
-            operatorInput = operatorInput +=' border-danger'
-        }else if(validOp === true){
-            operatorInput = operatorInput += ' border-success'
-        }
-        else{
-            operatorInput = inputs
-        }
+        const handleOnBlur = this.handleOnBlur;
+        const handleOnChange = this.handleSample;
 
         return(<div className='row justify-content-center m-0'>
             <div className='col-12 m-4'>
                 <h1 className='text-center'>{this.state.name}</h1>
             </div>
             <div className='col-sm-12 col-xl-10'>
-                <form  onSubmit={handleSubmit}>
+                <form  onSubmit={this.handleSubmit}>
                 <div className='row justify-content-center form-inline mb-3'>
-                        <label className={regularLabels}>Operador </label>
+                        <label className={regularLabels}>Operador:</label>
                         <input 
-                            type='text'
-                            className={operatorInput}
+                            type='number'
+                            value={this.state.operator}
+                            className={inputs}
                             name='operator' 
                             placeholder='#####'
-                            onChange={handleOperator}
+                            onChange={this.handleOperator}
                         />
-                        <label className={warningLabels}>{messageOp}</label>
+                        <label className={warningLabels}>{this.state.messageOp}</label>
                     </div>
                     <div className='row justify-content-center form-inline mb-3'>
                         <label className={regularLabels}>Velocidad (rpm):</label>
                         <input
                             type='number' 
                             className={inputs}
-                            value={velocity}
+                            value={this.state.velocity}
                             placeholder='#####'
-                            name='velocity' 
-                            onChange={handleVelocity}
+                            name='velocity'
+                            onBlur={this.handleValidateVelocity}
+                            onChange={this.handleVelocity}
                         />
-                        <label className={warningLabels}>{messageVel}</label>
+                        <label className={warningLabels}>{this.state.messageVel}</label>
                     </div>
-   
                     <div>
-                    <h5 className='text-center m-4'>Códigos</h5>
-                    <div className='row justify-content-center form-inline mb-2'>
+                        <h5 className='text-center m-4'>Códigos</h5>
+                        <div className='row justify-content-center form-inline mb-2'>
                             <label className={regularLabels}>Muestra 1:</label>
                             <input 
-                                value={samples[0]}
+                                value={this.state.samples[0]}
                                 type='text'
                                 className={inputs}
                                 name={'sample1'} 
                                 placeholder={format}
-                                onBlur={handleBlanks}
-								onChange={handleSample}
+                                onBlur={handleOnBlur}
+								onChange={handleOnChange}
 								ref='firstSample'
                             />
-							<label className={warningLabels}>{messageSamples[0]}</label>
+							<label className={warningLabels}>{this.state.messageSamples[0]}</label>
                         </div>
                         <div className='row justify-content-center form-inline mb-2'>
                             <label className={regularLabels}>Muestra 2:</label>
                             <input
-                                value={samples[1]}
+                                value={this.state.samples[1]}
                                 type='text'
                                 className={inputs}
                                 name={'sample2'}
                                 placeholder={format}
-                                disabled={!rightSamples[0]}
-                                onBlur={handleBlanks}
-                                onChange={handleSample}
+                                onBlur={handleOnBlur}
+                                onChange={handleOnChange}
                             />
-                            <label className={warningLabels}>{messageSamples[1]}</label> 
+                            <label className={warningLabels}>{this.state.messageSamples[1]}</label> 
                         </div>
                         <div className='row justify-content-center form-inline mb-2'>
                             <label className={regularLabels}>Muestra 3:</label>
                             <input 
                                 type='text'
-                                value={samples[2]}
+                                value={this.state.samples[2]}
                                 className={inputs}
                                 name={'sample3'} 
                                 placeholder={format}
-                                disabled={!rightSamples[1]}
-                                onBlur={handleBlanks}
-                                onChange={handleSample}
+                                onBlur={handleOnBlur}
+                                onChange={handleOnChange}
                             />
-                            <label className={warningLabels}>{messageSamples[2]}</label> 
+                            <label className={warningLabels}>{this.state.messageSamples[2]}</label> 
                         </div>
                         <div className='row justify-content-center form-inline mb-2'>
                             <label className={regularLabels}>Muestra 4:</label>
                             <input 
                                 type='text'
-                                value={samples[3]}
+                                value={this.state.samples[3]}
                                 className={inputs}
                                 name={'sample4'} 
                                 placeholder={format}
-                                disabled={!rightSamples[2]}
-                                onBlur={handleBlanks}
-                                onChange={handleSample}
+                                onBlur={handleOnBlur}
+                                onChange={handleOnChange}
                             />
-                            <label className={warningLabels}>{messageSamples[3]}</label> 
+                            <label className={warningLabels}>{this.state.messageSamples[3]}</label> 
                         </div>
                         <div className='row justify-content-center form-inline mb-2'>
                             <label className={regularLabels}>Muestra 5:</label>
                             <input 
                                 type='text'
-                                value={samples[4]}
+                                value={this.state.samples[4]}
                                 className={inputs}
                                 name={'sample5'} 
                                 placeholder={format}
-                                disabled={!rightSamples[3]}
-                                onBlur={handleBlanks}
-                                onChange={handleSample}
+                                onBlur={handleOnBlur}
+                                onChange={handleOnChange}
                             />
-                            <label className={warningLabels}>{messageSamples[4]}</label> 
+                            <label className={warningLabels}>{this.state.messageSamples[4]}</label> 
                         </div>
                         <div className='row justify-content-center form-inline mb-2'>
                             <label className={regularLabels}>Muestra 6:</label>
                             <input 
                                 type='text'
-                                value={samples[5]}
+                                value={this.state.samples[5]}
                                 className={inputs}
                                 name={'sample6'} 
                                 placeholder={format}
-                                disabled={!rightSamples[4]}
-                                onBlur={handleBlanks}
-                                onChange={handleSample}
+                                onBlur={handleOnBlur}
+                                onChange={handleOnChange}
                             />
-                            <label className={warningLabels}>{messageSamples[5]}</label> 
+                            <label className={warningLabels}>{this.state.messageSamples[5]}</label> 
                         </div>
                         <div className='row justify-content-center form-inline mb-2'>
                             <label className={regularLabels}>Muestra 7:</label>
                             <input 
                                 type='text'
-                                value={samples[6]}
+                                value={this.state.samples[6]}
                                 className={inputs}
                                 name={'sample7'} 
                                 placeholder={format}
-                                disabled={!rightSamples[5]}
-                                onBlur={handleBlanks}
-                                onChange={handleSample}
+                                onBlur={handleOnBlur}
+                                onChange={handleOnChange}
                             />
-                            <label className={warningLabels}>{messageSamples[6]}</label> 
+                            <label className={warningLabels}>{this.state.messageSamples[6]}</label> 
                         </div>
                         <div className='row justify-content-center form-inline mb-2'>
                             <label className={regularLabels}>Muestra 8:</label>
                             <input 
                                 type='text'
-                                value={samples[7]}
+                                value={this.state.samples[7]}
                                 className={inputs}
                                 name={'sample8'} 
                                 placeholder={format}
-                                disabled={!rightSamples[6]}
-                                onBlur={handleBlanks}
-                                onChange={handleSample}
+                                onBlur={handleOnBlur}
+                                onChange={handleOnChange}
                             />
-                            <label className={warningLabels}>{messageSamples[7]}</label> 
+                            <label className={warningLabels}>{this.state.messageSamples[7]}</label> 
                         </div>
                         <div className='row justify-content-center form-inline mb-2'>
                             <label className={regularLabels}>Muestra 9:</label>
                             <input 
                                 type='text'
-                                value={samples[8]}
+                                value={this.state.samples[8]}
                                 className={inputs}
                                 name={'sample9'} 
                                 placeholder={format}
-                                disabled={!rightSamples[7]}
-                                onBlur={handleBlanks}
-                                onChange={handleSample}
+                                onBlur={handleOnBlur}
+                                onChange={handleOnChange}
                             />
-                            <label className={warningLabels}>{messageSamples[8]}</label> 
+                            <label className={warningLabels}>{this.state.messageSamples[8]}</label> 
                         </div>
                         <div className='row justify-content-center form-inline mb-2'>
                             <label className={regularLabels}>Muestra 10:</label>
                             <input 
                                 type='text'
-                                value={samples[9]}
+                                value={this.state.samples[9]}
                                 className={inputs}
                                 name={'sample10'}
                                 placeholder={format}
-                                disabled={!rightSamples[8]}
-                                onBlur={handleBlanks}
-                                onChange={handleSample}
+                                onBlur={handleOnBlur}
+                                onChange={handleOnChange}
                             />
-                            <label className={warningLabels}>{messageSamples[9]}</label>
+                            <label className={warningLabels}>{this.state.messageSamples[9]}</label>
                         </div>
                     </div>
-					<div className='row justify-content-center'>
-                    <button
-                        type='submit'
-                        className='btn button col-md-6 col-sm-10 col-lg-3'
-                        disabled={(validOp && validVel && validSamples) ? false : true}
-                        title={(this.state.validSamples && this.state.validOp) ? 'La forma esta lista' : 'La forma no esta lista'}
-                    >
-                    Guardar
-                    {(this.state.loading) ? <img src='/images/spinner.gif' alt='loading' id='spinner'/> : ''}
-                    </button>
-                    </div>
-					<div className='row justify-content-center'>
-                        <label className={'col-lg-3 col-sm-10 text-center col-md-6  mt-3'}><p id='success'>{messageAPI}</p></label>
+                    <div className='row justify-content-center'>
+                        <label className={'col-lg-3 col-sm-10 text-center col-md-6  mt-3'}><p id='success'>{this.state.messageAPI}</p></label>
 					</div>
+					<div className='row justify-content-center'>
+                        <button
+                            type='submit'
+                            className='btn button col-md-6 col-sm-10 col-lg-3'
+                            disabled={(this.validOp && this.validVel && this.validSamples) ? false : true}
+                            title={(this.state.validSamples && this.state.validOp) ? 'La forma esta lista' : 'La forma no esta lista'}
+                        >
+                        Guardar
+                        {(this.state.loading) ? <img src='/images/spinner.gif' alt='loading' id='spinner'/> : ''}
+                        </button>
+                    </div>
                 </form>
             </div>
           </div>)
