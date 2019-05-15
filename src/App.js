@@ -11,13 +11,13 @@ import './App.css';
 
 function App() {
     const menu = ['Inicio', 'Prueba electricidad', 'Prueba calor', 'Prueba quimico', 'Prueba centrifugado', 'Reporte de muestra']
-    const comp = [<Home/>, <ElectricityTest/>, <HeatTest/>, <ChemistryTest/>, <SpinnerTest/>, <GenerateReport/>]
+    const comp = [<Home key={0}/>, <ElectricityTest key={1}/>, <HeatTest key={2}/>, <ChemistryTest key={3}/>, <SpinnerTest key={4}/>, <GenerateReport key={5}/>]
 
     return(<div className='fullHeight'>
         <header className='container-fluid bg-color'></header>
         <Tests>
             {menu.map((t, keyT) => {
-                return(<div label={t}>
+                return(<div label={t} key={keyT}>
                     {comp.map((c, keyC) => {
                         if(keyT === keyC) {
                             return(c)
