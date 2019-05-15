@@ -370,7 +370,7 @@ export default class HeatTest extends React.Component{
                                 name={'sample2'}
                                 placeholder={format}
                                 onBlur={handleOnBlur}
-                                onBluronChange={handleOnChange}
+                                onChange={handleOnChange}
                             />
                             <label className={warningLabels}>{this.state.messageSamples[1]}</label> 
                         </div>
@@ -383,7 +383,7 @@ export default class HeatTest extends React.Component{
                                 name={'sample3'} 
                                 placeholder={format}
                                 onBlur={handleOnBlur}
-                                onBluronChange={handleOnChange}
+                                onChange={handleOnChange}
                             />
                             <label className={warningLabels}>{this.state.messageSamples[2]}</label> 
                         </div>
@@ -396,7 +396,7 @@ export default class HeatTest extends React.Component{
                                 name={'sample4'} 
                                 placeholder={format}
                                 onBlur={handleOnBlur}
-                                onBluronChange={handleOnChange}
+                                onChange={handleOnChange}
                             />
                             <label className={warningLabels}>{this.state.messageSamples[3]}</label> 
                         </div>
@@ -409,7 +409,7 @@ export default class HeatTest extends React.Component{
                                 name={'sample5'} 
                                 placeholder={format}
                                 onBlur={handleOnBlur}
-                                onBluronChange={handleOnChange}
+                                onChange={handleOnChange}
                             />
                             <label className={warningLabels}>{this.state.messageSamples[4]}</label> 
                         </div>
