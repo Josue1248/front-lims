@@ -204,34 +204,9 @@ export default class HeatTest extends React.Component{
     handleOperator(e) {
         const operator = e.target.value
 
-        if(/[1-99999]/.test(operator) && operator.length <= 5){
-            axios.get(`http://localhost:4000/api/operators/` + operator) 
-            .then(res => {
-                if (res.data.message) { 
-                    this.setState({
-                        messageOp: 'El operador no existe',
-                        validOp: false,
-                    })
-                } else  {
-                    this.setState({
-                        operator: operator,
-                        messageOp: '',
-                        validOp: true,
-                    })
-                }
-            })
-            .catch( () => {
-                alert('Conection Timed Out');
-            });
-        }else if(operator === ''){
+        if(operator.length <= 5){
             this.setState({
-                messageOp: 'El campo no puede estar vacio', //that's racist
-                validOp: undefined,
-            })
-        }else{
-            this.setState({
-                validOp: false,
-                messageOp: 'Error de sintaxis',
+                operator: operator,
             })
         }
     }
@@ -259,7 +234,8 @@ export default class HeatTest extends React.Component{
             {
                 name: 'Tiempo',
                 value: time
-            }]
+            }],
+            states: ["Prueba de calor pasada", "Muestra lista para prueba de quimica"]
 		})
 
 		.then( res=> {
@@ -294,17 +270,6 @@ export default class HeatTest extends React.Component{
         const handleOnBlur = this.handleOnBlur;
         const handleOnChange = this.handleSample;
 
-        let operatorInput = inputs;
-
-        if(this.validOp === false){
-            operatorInput = operatorInput += ' border-danger'
-        }else if(this.validOp === true){
-            operatorInput = operatorInput += ' border-success'
-        }
-        else{
-            operatorInput = inputs
-        }
-
         return(<div className='row justify-content-center m-0'>
             <div className='col-12 m-4'>
                 <h1 className='text-center'>{this.state.name}</h1>
@@ -315,7 +280,8 @@ export default class HeatTest extends React.Component{
                         <label className={regularLabels}>Operador</label>
                         <input 
                             type='text' 
-                            className={operatorInput}
+                            value={this.state.operator}
+                            className={inputs}
                             name='operator' 
                             placeholder='#####'
                             onChange={this.handleOperator}
@@ -420,8 +386,8 @@ export default class HeatTest extends React.Component{
                     <button
                         type='submit'
                         className='btn button col-md-6 col-sm-10 col-lg-3'
-                        disabled={(this.validOp && this.validTemp && this.validTime && this.validSamples) ? false : true}
-                        title={(this.state.validSamples && this.state.validOp) ? 'La forma esta lista' : 'La forma no esta lista'}
+                        disabled={(this.state.validOp && this.state.validTemp && this.state.validTime && this.state.validSamples) ? false : true}
+                        title={(this.state.validOp && this.state.validTemp && this.state.validTime && this.state.validSamples) ? 'La forma esta lista' : 'La forma no esta lista'}
                     >
                     Guardar
                     {(this.state.loading) ? <img src='/images/spinner.gif' alt='loading' id='spinner'/> : ''}
