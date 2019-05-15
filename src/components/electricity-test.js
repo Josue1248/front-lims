@@ -207,7 +207,6 @@ export default class ElectricityTest extends React.Component{
 		.then( res=> {
 			if (res.data.message === 'Insertion completed') {
 				this.setState({
-					operator: 0, 
                     samples: Array(10).fill(''),
                     rightSamples: Array(10).fill(false),
 					messageAPI: res.data.message,
