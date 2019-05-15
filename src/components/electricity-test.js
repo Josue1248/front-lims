@@ -156,34 +156,9 @@ export default class ElectricityTest extends React.Component{
     handleOperator(e) {
         const operator = e.target.value
 
-        if(/[1-99999]/.test(operator) && operator.length <= 5){
-            axios.get(`http://localhost:4000/api/operators/` + operator) 
-            .then(res => {
-                if (res.data.message) { 
-                    this.setState({
-                        messageOp: 'El operador no existe',
-                        validOp: false,
-                    })
-                } else  {
-                    this.setState({
-                        operator: operator,
-                        messageOp: '',
-                        validOp: true,
-                    })
-                }
-            })
-            .catch( () => {
-                alert('Conection Timed Out');
-            });
-        }else if(operator === ''){
+        if(operator.length <= 5){
             this.setState({
-                messageOp: 'El campo no puede estar vacio', //that's racist
-                validOp: undefined,
-            })
-        }else{
-            this.setState({
-                validOp: false,
-                messageOp: 'Error de sintaxis',
+                operator: operator,
             })
         }
     }
@@ -202,7 +177,8 @@ export default class ElectricityTest extends React.Component{
 		axios.post(`http://localhost:4000/api/test-forms/add`,{
 			operator: operator,
 			test: this.state.name,
-			samples: samples,
+            samples: samples,
+            states: ["Prueba de electricidad pasada", "Muestra lista para prueba de calor"]
 		})
 		.then( res=> {
 			if (res.data.message === 'Insertion completed') {
@@ -236,16 +212,6 @@ export default class ElectricityTest extends React.Component{
         const handleOnBlur = this.handleOnBlur;
         const handleOnChange = this.handleSample;
 
-        let operatorInput = inputs
-
-        if(this.state.validOp === false) {
-            operatorInput = operatorInput += ' border-danger'
-        } else if(this.state.validOp === true) {
-            operatorInput = operatorInput += ' border-success'
-        } else {
-            operatorInput = inputs
-        }
-
         return(<div className='row justify-content-center m-0'>
             <div className='col-12 m-4'>
                 <h1 className='text-center'>{this.state.name}</h1>
@@ -256,7 +222,8 @@ export default class ElectricityTest extends React.Component{
                         <label className={regularLabels}>Operador</label>
                         <input
                             type='text'
-                            className={operatorInput}
+                            value={this.state.operator}
+                            className={inputs}
                             name='operator' 
                             placeholder='#####'
                             onBlur={this.handleOperator}
