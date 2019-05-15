@@ -95,34 +95,9 @@ export default class ChemistryTest extends React.Component{
     handleOperator(e) {
         const operator = e.target.value
 
-        if(/[1-99999]/.test(operator) && operator.length <= 5){
-            axios.get(`http://localhost:4000/api/operators/` + operator) 
-            .then(res => {
-                if(res.data.message) { 
-                    this.setState({
-                        messageOp: res.data.message,
-                        validOp: false,
-                    })
-                } else {
-                    this.setState({
-                        operator: operator,
-                        messageOp: '',
-                        validOp: true,
-                    })
-                }
-            })
-            .catch( () => {
-                alert('Conection Timed Out');
-            });
-        } else if(operator==='') {
+        if(operator.length <= 5){
             this.setState({
-                messageOp: 'El campo no puede estar vacio', //that's racist
-                validOp: undefined,
-            })
-        } else {
-            this.setState({
-                validOp: false,
-                messageOp: 'Error de sintaxis',
+                operator: operator,
             })
         }
     }
@@ -189,7 +164,8 @@ export default class ChemistryTest extends React.Component{
             attributes:[{
                 name: 'Quimico',
                 value: chemistry
-            }]
+            }],
+            states: ["Prueba de quimica pasada", "Muestra lista para prueba de centrifugado"]
         })
         .then( res => {
             if(res.data.message === 'Insertion completed') {
@@ -230,17 +206,6 @@ export default class ChemistryTest extends React.Component{
         const inputs = 'col-md-12 col-sm-12 col-lg-5 col-xl-5 form-control'
         const warningLabels = 'col-md-12 col-sm-12 col-lg-10 col-xl-10 text-danger text-center'
 
-        let operatorInput = inputs;
-
-        if(this.state.validOp === false){
-            operatorInput = operatorInput += ' border-danger'
-        }else if(this.state.validOp === true){
-            operatorInput = operatorInput += ' border-success'
-        }
-        else{
-            operatorInput = inputs
-        }
-
         return(<div className='row justify-content-center m-0'>
             <div className='col-12 m-4'>
                 <h1 className='text-center'>{this.state.name}</h1>
@@ -251,7 +216,8 @@ export default class ChemistryTest extends React.Component{
                         <label className={regularLabels}>Operador</label>
                         <input 
                             type='text' 
-                            className={operatorInput}
+                            value={this.state.operator}
+                            className={inputs}
                             name='operator' 
                             placeholder='#####'
                             onChange={this.handleOperator}
