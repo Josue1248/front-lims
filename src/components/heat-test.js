@@ -8,8 +8,6 @@ export default class HeatTest extends React.Component{
         this.state={
             name: 'Prueba de calor',
             operator: '',
-            messageOp: '',
-            validOp: undefined,
             temperature: 0,
             messageTemp: '',
             validTemp: undefined,
@@ -105,7 +103,10 @@ export default class HeatTest extends React.Component{
     handleSampleStatus(sample, sampleNumber) {
         axios.get(`http://localhost:4000/api/samples/${sample}`)
         .then(res => {
-            if (res.data.estado !== 'Muestra lista para prueba de calor' || res.data.message === 'Muestra usada') {
+            const state = res.data.estados.filter((element)=>{ return element.estado === 'Muestra lista para prueba de calor'})
+            const sampleUsed = res.data.estados.filter((element)=>{ return element.estado === 'Muestra usada'})
+
+            if (state.length === 0 || sampleUsed === 1) {
                 this.handleSamplesMessage('La muestra no tiene el estado requerido', sampleNumber)
                 this.setState({
                     validSamples: false
@@ -386,8 +387,8 @@ export default class HeatTest extends React.Component{
                     <button
                         type='submit'
                         className='btn button col-md-6 col-sm-10 col-lg-3'
-                        disabled={(this.state.validOp && this.state.validTemp && this.state.validTime && this.state.validSamples) ? false : true}
-                        title={(this.state.validOp && this.state.validTemp && this.state.validTime && this.state.validSamples) ? 'La forma esta lista' : 'La forma no esta lista'}
+                        disabled={(/\d{5}/g.test(this.state.operator) && this.state.validTemp && this.state.validTime && this.state.validSamples) ? false : true}
+                        title={(/\d{5}/g.test(this.state.operator) && this.state.validTemp && this.state.validTime && this.state.validSamples) ? 'La forma esta lista' : 'La forma no esta lista'}
                     >
                     Guardar
                     {(this.state.loading) ? <img src='/images/spinner.gif' alt='loading' id='spinner'/> : ''}
