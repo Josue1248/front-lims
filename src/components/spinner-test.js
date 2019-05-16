@@ -8,8 +8,6 @@ export default class SpinnerTest extends React.Component{
         this.state={
             name: 'Prueba de centrífuga',
             operator: '',
-            messageOp: '',
-            validOp: undefined,
             velocity: '',
             messageVel: '',
             validVel: undefined,
@@ -87,7 +85,10 @@ export default class SpinnerTest extends React.Component{
     handleSampleStatus(sample, sampleNumber) {
             axios.get(`http://localhost:4000/api/samples/${sample}`)
             .then(res => {
-                if (res.data.estado !== 'Muestra lista para prueba de centrifugado' || res.data.message === 'Muestra usada') {
+                const state = res.data.estados.filter((element)=>{ return element.estado === 'Muestra lista para prueba de centrifugado'})
+                const sampleUsed = res.data.estados.filter((element)=>{ return element.estado === 'Muestra usada'})
+
+                if (state.length === 0 || sampleUsed === 1) {
                     this.handleSamplesMessage('La muestra no tiene el estado requerido', sampleNumber)
                     this.setState({
                         validSamples: false
@@ -223,7 +224,7 @@ export default class SpinnerTest extends React.Component{
 		
 		})
 		.then( res=> {
-			if (res.data.message === 'Insertion completed') {
+			if (res.data.message) {
 				this.setState({
                     samples: Array(10).fill(''),
 					messageAPI: res.data.message,
@@ -425,8 +426,8 @@ export default class SpinnerTest extends React.Component{
                         <button
                             type='submit'
                             className='btn button col-md-6 col-sm-10 col-lg-3'
-                            disabled={(this.validOp && this.validVel && this.validSamples) ? false : true}
-                            title={(this.state.validSamples && this.state.validOp) ? 'La forma esta lista' : 'La forma no esta lista'}
+                            disabled={(/\d{5}/g.test(this.state.operator) && this.state.validVel && this.state.validSamples) ? false : true}
+                            title={(this.state.validSamples && this.state.validVel && /\d{5}/g.test(this.state.operator)) ? 'La forma esta lista' : 'La forma no esta lista'}
                         >
                         Guardar
                         {(this.state.loading) ? <img src='/images/spinner.gif' alt='loading' id='spinner'/> : ''}
