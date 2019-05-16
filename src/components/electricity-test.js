@@ -7,9 +7,7 @@ export default class ElectricityTest extends React.Component{
         super(props);
         this.state = {
             name: 'Prueba de electricidad',
-            operator: 0,
-            messageOp: '',
-            validOp: undefined,
+            operator: '',
             samples: Array(10).fill(''),
             messageSamples: Array(10).fill(''),
             validSamples: false,
@@ -82,7 +80,10 @@ export default class ElectricityTest extends React.Component{
     handleSampleStatus(sample, sampleNumber) {
             axios.get(`http://localhost:4000/api/samples/${sample}`)
             .then(res => {
-                if (res.data.estado !== 'Nueva muestra' || res.data.message === 'Muestra usada') {
+                const state = res.data.estados.filter((element)=>{ return element.estado === 'Nueva muestra'})
+                const sampleUsed = res.data.estados.filter((element)=>{ return element.estado === 'Muestra usada'})
+
+                if (state.length === 0 || sampleUsed === 1) {
                     this.handleSamplesMessage('La muestra no es nueva', sampleNumber)
                     this.setState({
                         validSamples: false
@@ -94,7 +95,7 @@ export default class ElectricityTest extends React.Component{
                     })
                 }
             })
-            .catch( () => {
+            .catch((err) => {
                 alert('Conection Timed Out');
             });
     }
@@ -167,13 +168,13 @@ export default class ElectricityTest extends React.Component{
         event.preventDefault();
 
         this.setState({
-            loading:true
+            loading: true
         })
 
         const operator = this.state.operator
-
-        const samples = this.state.samples.filter((sample)=>{return ((/SA-\d\d-\d\d\d\d\d/.test(sample) && sample.length === 11))})
-   
+        const samples = this.state.samples.filter((sample)=>{return ((/MU-\d\d-\d\d\d\d\d/.test(sample) && sample.length === 11))})
+        console.log(operator)
+        console.log(samples)
 		axios.post(`http://localhost:4000/api/test-forms/add`,{
 			operator: operator,
 			test: this.state.name,
@@ -181,7 +182,7 @@ export default class ElectricityTest extends React.Component{
             states: ["Prueba de electricidad pasada", "Muestra lista para prueba de calor"]
 		})
 		.then( res=> {
-			if (res.data.message === 'Insertion completed') {
+			if (res.data.message) {
 				this.setState({
                     samples: Array(10).fill(''),
                     rightSamples: Array(10).fill(false),
@@ -195,7 +196,7 @@ export default class ElectricityTest extends React.Component{
 					loading: false,
 				})
 			}
-			})
+		})
 		.catch( () => {
 			alert('Conection Timed Out');
 			this.setState({
@@ -217,7 +218,7 @@ export default class ElectricityTest extends React.Component{
                 <h1 className='text-center'>{this.state.name}</h1>
             </div>
             <div className='col-sm-12 col-xl-10'>
-                <form onSubmit={this.state.handleSubmit}>
+                <form onSubmit={this.handleSubmit}>
                     <div className='row justify-content-center form-inline mb-3'>
                         <label className={regularLabels}>Operador</label>
                         <input
@@ -226,7 +227,7 @@ export default class ElectricityTest extends React.Component{
                             className={inputs}
                             name='operator' 
                             placeholder='#####'
-                            onBlur={this.handleOperator}
+                            onChange={this.handleOperator}
                         />
                         <label className={warningLabels}>{this.state.messageOp}</label>
                     </div>
@@ -368,8 +369,8 @@ export default class ElectricityTest extends React.Component{
 					<button
                         type='submit'
                         className='btn button col-md-6 col-sm-10 col-lg-3'
-                        disabled={(this.state.validSamples && this.state.validOp) ? false : true}
-                        title={(this.state.validSamples && this.state.validOp) ? 'La forma esta lista' : 'La forma no esta lista'}
+                        disabled={(this.state.validSamples && /\d{5}/g.test(this.state.operator)) ? false : true}
+                        title={(this.state.validSamples && /\d{5}/g.test(this.state.operator)) ? 'La forma esta lista' : 'La forma no esta lista'}
                     >
                     Guardar
                     {(this.state.loading) ? <img src='/images/spinner.gif' alt='loading' id='spinner'/> : ''}
