@@ -6,7 +6,7 @@ export default class ChemistryTest extends React.Component{
     constructor(props){
         super(props);
         this.state={
-            name: 'Prueba de químico',
+            name: 'Prueba de quimico',
             operator: '',
             messageOp: '',
             validOp: undefined,
@@ -56,7 +56,10 @@ export default class ChemistryTest extends React.Component{
     handleSampleStatus(sample) {
             axios.get(`http://localhost:4000/api/samples/${sample}`)
             .then(res => {
-                if (res.data.estado !== 'Muestra lista para prueba de química' || res.data.message === 'Muestra usada') {
+                const state = res.data.estados.filter((element)=>{ return element.estado === 'Muestra lista para prueba de quimica'})
+                const sampleUsed = res.data.estados.filter((element)=>{ return element.estado === 'Muestra usada'})
+
+                if (state.length === 0 || sampleUsed === 1) {
                     this.setState({
                         messageSample: 'La muestra no tiene el estado requerido',
                         validSample: false
@@ -168,7 +171,7 @@ export default class ChemistryTest extends React.Component{
             states: ["Prueba de quimica pasada", "Muestra lista para prueba de centrifugado"]
         })
         .then( res => {
-            if(res.data.message === 'Insertion completed') {
+            if(res.data.message) {
 				console.log(res.data.message)
                 this.setState({
                     sample: '',
@@ -177,20 +180,11 @@ export default class ChemistryTest extends React.Component{
                     loading: false,
 				});
 				ReactDOM.findDOMNode(this.refs.firstSample).focus();
-            } else if(res.data.message === 'Samples are wrong') {
-                this.setState({
-                    messageAPI: 'Sample went through the test already'
-                });
-            } else if(res.data.message === 'This sample already passed this test') {
-                this.setState({
-                    messageAPI: 'This sample already passed this test'
-                });
             } else {
-                console.log(res.data.message)
-                this.setState({
-                    messageAPI: 'The sample is not ready for this test'
-                });
-            }
+				this.setState({
+					loading: false,
+				})
+			}
         })
         .catch( () => {
             alert('Conection Timed Out');
@@ -213,7 +207,7 @@ export default class ChemistryTest extends React.Component{
             <div className='col-sm-12 col-xl-10'>
                 <form onSubmit={this.handleSubmit}>
                 <div className='row justify-content-center form-inline mb-3'>
-                        <label className={regularLabels}>Operador</label>
+                        <label className={regularLabels}>Operador:</label>
                         <input 
                             type='text' 
                             value={this.state.operator}
@@ -261,8 +255,8 @@ export default class ChemistryTest extends React.Component{
                     <button
                         type='submit'
                         className='btn button col-md-6 col-sm-10 col-lg-3'
-                        disabled={(this.state.validOp && this.state.validCh && this.state.validSample) ? false : true}
-                        title={(this.state.validSamples && this.state.validOp) ? 'La forma esta lista' : 'La forma no esta lista'}
+                        disabled={(/\d{5}/g.test(this.state.operator) && this.state.validCh && this.state.validSample) ? false : true}
+                        title={(this.state.validSamples && this.state.validCh && /\d{5}/g.test(this.state.operator)) ? 'La forma esta lista' : 'La forma no esta lista'}
                     >
                     Guardar
                     {(this.state.loading) ? <img src='/images/spinner.gif' alt='loading' id='spinner'/> : ''}
