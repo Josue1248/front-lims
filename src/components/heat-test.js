@@ -143,9 +143,15 @@ export default class HeatTest extends React.Component{
 
     handleBlanks(sampleNumber) {
         if(sampleNumber <= this.state.samples.length) {
-            this.handleUpdateSamples(this.state.samples[sampleNumber + 1], sampleNumber )
-            this.handleSamplesMessage(this.state.messageSamples[sampleNumber + 1], sampleNumber)
-            this.handleBlanks(sampleNumber + 1)
+            if (sampleNumber < this.state.samples.length - 1) {
+                this.handleUpdateSamples(this.state.samples[sampleNumber + 1], sampleNumber)
+                this.handleSamplesMessage(this.state.messageSamples[sampleNumber + 1], sampleNumber)
+                this.handleBlanks(sampleNumber + 1)
+            } else if(sampleNumber === this.state.samples.length - 1){
+                this.handleUpdateSamples('', sampleNumber)
+                this.handleSamplesMessage('', sampleNumber)
+                return
+            }
         } else {
             return
         }
