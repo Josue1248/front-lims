@@ -78,12 +78,13 @@ export default class ElectricityTest extends React.Component{
     }
 
     handleSampleStatus(sample, sampleNumber) {
+        if(sample.replace(/\s/g,'') !== ''){
             axios.get(`http://localhost:4000/api/samples/${sample}`)
             .then(res => {
                 const state = res.data.estados.filter((element)=>{ return element.estado === 'Nueva muestra'})
                 const sampleUsed = res.data.estados.filter((element)=>{ return element.estado === 'Muestra usada'})
 
-                if (state.length === 0 || sampleUsed === 1) {
+                if (state.length === 0 || sampleUsed.length === 1) {
                     this.handleSamplesMessage('La muestra no es nueva', sampleNumber)
                     this.setState({
                         validSamples: false
@@ -93,28 +94,34 @@ export default class ElectricityTest extends React.Component{
                     this.setState({
                         validSamples: true
                     })
+                    this.handleValidateSamples(sampleNumber + 1)
                 }
             })
-            .catch((err) => {
+            .catch(() => {
                 alert('Conection Timed Out');
             });
+        } else {
+            return
+        }
     }
 
-    handleValidateSamples(sample, sampleNumber) {
-        if(this.handleRegex(sample, sampleNumber)){
-            const isNotRepeated = this.handleRepeatedSamples(sample, sampleNumber, 0)
-
-            if(isNotRepeated){
-                this.handleSampleStatus(sample, sampleNumber)
+    handleValidateSamples(sampleNumber) {
+        if(sampleNumber <= this.state.samples.length){
+            if(this.handleRegex(this.state.samples[sampleNumber], sampleNumber)) {
+                const isNotRepeated = this.handleRepeatedSamples(this.state.samples[sampleNumber], sampleNumber, 0)
+    
+                if(isNotRepeated) {
+                    this.handleSampleStatus(this.state.samples[sampleNumber], sampleNumber)
+                } else {
+                    this.setState({
+                        validSamples: false
+                    })
+                }
             } else {
                 this.setState({
                     validSamples: false
                 })
             }
-        } else {
-            this.setState({
-                validSamples: false
-            })
         }
     }
 
@@ -122,8 +129,8 @@ export default class ElectricityTest extends React.Component{
         const sampleNumber = parseInt(e.target.name.replace('sample',''), 10) - 1
         const sample = e.target.value
 
-        if(sample !== '') {
-            this.handleValidateSamples(sample, sampleNumber)
+        if(sample.replace(/\s/g,'') !== '') {
+            this.handleValidateSamples(0)
         } else {
             this.handleBlanks(sampleNumber)
         }
@@ -131,7 +138,7 @@ export default class ElectricityTest extends React.Component{
 
     handleRepeatedSamples(sample, sampleNumber, index) {
         if (index <= this.state.samples.length){
-            if (sample === this.state.samples[index] && (index !== sampleNumber && index < sampleNumber)){
+            if (sample === this.state.samples[index] && (index < sampleNumber) && sample !== ''){
                 this.handleSamplesMessage('Esta muestra esta repetida', sampleNumber)
                 return false
             } else {
@@ -146,9 +153,15 @@ export default class ElectricityTest extends React.Component{
 
     handleBlanks(sampleNumber) {
         if(sampleNumber <= this.state.samples.length) {
-            this.handleUpdateSamples(this.state.samples[sampleNumber + 1], sampleNumber )
-            this.handleSamplesMessage(this.state.messageSamples[sampleNumber + 1], sampleNumber)
-            this.handleBlanks(sampleNumber + 1)
+            if (sampleNumber < this.state.samples.length - 1) {
+                this.handleUpdateSamples(this.state.samples[sampleNumber + 1], sampleNumber)
+                this.handleSamplesMessage(this.state.messageSamples[sampleNumber + 1], sampleNumber)
+                this.handleBlanks(sampleNumber + 1)
+            } else if(sampleNumber === this.state.samples.length - 1){
+                this.handleUpdateSamples('', sampleNumber)
+                this.handleSamplesMessage('', sampleNumber)
+                return
+            }
         } else {
             return
         }
