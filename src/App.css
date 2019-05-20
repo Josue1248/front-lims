@@ -1,15 +1,14 @@
 /*
     Rojo: #FF4858
-    Verde: #1B7F79
-    Verde oscuro: #00CCC0
+    Verde oscuro: #1B7F79
     Verde: #00CCC0
     Verde claro: #72F2EB
     Gris: #747F7F
 */
 
 button[disabled]:hover {
-	border-color: #747F7F;
-	background: #747F7F;
+	border-color: #FF4858;
+	background: #FF4858;
 }
 
 h1,h2,h3 {
@@ -22,6 +21,16 @@ header{
 
 html, body{
 	height: 100% !important;
+}
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none;
+  margin: 0; 
+}
+
+input[type='number'] {
+	-moz-appearance: textfield;
 }
 
 nav{
