@@ -19,8 +19,8 @@ export default class extends React.Component {
 		return (
 			<tr>
 				{
-					Object.values(cols).map(function(col) {
-						return (<th>{col}</th>)
+					Object.values(cols).map(function(col, index) {
+						return (<th key={index}>{col}</th>)
 					})
 				}
 			</tr>
@@ -32,11 +32,11 @@ export default class extends React.Component {
 			rows
 		} = this.props;
 		return ( 
-			rows.map(function(row) {
-				return (<tr>
+			rows.map(function(row, index) {
+				return (<tr key={index}>
 					{
 						Object.values(row).map( function(value, idx){
-							return <td data-label={Object.keys(row)[idx]}>{value}</td>
+							return <td key={idx} data-label={Object.keys(row)[idx]}>{value}</td>
 						})
 					}
 
