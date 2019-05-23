@@ -186,8 +186,7 @@ export default class ElectricityTest extends React.Component{
 
         const operator = this.state.operator
         const samples = this.state.samples.filter((sample)=>{return ((/MU-\d\d-\d\d\d\d\d/.test(sample) && sample.length === 11))})
-        console.log(operator)
-        console.log(samples)
+
 		axios.post(`http://localhost:4000/api/test-forms/add`,{
 			operator: operator,
 			test: this.state.name,
