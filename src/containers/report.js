@@ -128,7 +128,8 @@ export default class SampleSearch extends React.Component{
 					this.state.attributes && this.state.attributes.length === 0 ? ('') : (
 						<ResponsiveTable title='Atributos' cols={{
 							Atributo: 'Atributo',
-							Valor: 'Valor'
+							Valor: 'Valor',
+                            Unidad: 'Unidad'
 						}} rows={this.state.attributes}/>
 					)
 				}		
