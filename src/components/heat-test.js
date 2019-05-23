@@ -101,43 +101,50 @@ export default class HeatTest extends React.Component{
     }
 
     handleSampleStatus(sample, sampleNumber) {
-        axios.get(`http://localhost:4000/api/samples/${sample}`)
-        .then(res => {
-            const state = res.data.estados.filter((element)=>{ return element.estado === 'Muestra lista para prueba de calor'})
-            const sampleUsed = res.data.estados.filter((element)=>{ return element.estado === 'Muestra usada'})
+        if(sample.replace(/\s/g,'') !== ''){
+            axios.get(`http://localhost:4000/api/samples/${sample}`)
+            .then(res => {
+                const state = res.data.estados.filter((element)=>{ return element.estado === 'Muestra lista para prueba de calor'})
+                const sampleUsed = res.data.estados.filter((element)=>{ return element.estado === 'Muestra usada'})
 
-            if (state.length === 0 || sampleUsed === 1) {
-                this.handleSamplesMessage('La muestra no tiene el estado requerido', sampleNumber)
-                this.setState({
-                    validSamples: false
-                })
-            } else {
-                this.handleSamplesMessage('', sampleNumber)
-                this.setState({
-                    validSamples: true
-                })
-            }
-        })
-        .catch( () => {
-            alert('Conection Timed Out');
-        });
+                if (state.length === 0 || sampleUsed === 1) {
+                    this.handleSamplesMessage('La muestra no tiene el estado requerido', sampleNumber)
+                    this.setState({
+                        validSamples: false
+                    })
+                } else {
+                    this.handleSamplesMessage('', sampleNumber)
+                    this.setState({
+                        validSamples: true
+                    })
+                    this.handleValidateSamples(sampleNumber + 1)
+                }
+            })
+            .catch( () => {
+                alert('Conection Timed Out');
+            });
+        } else {
+            return 
+        }
     }
 
-    handleValidateSamples(sample, sampleNumber) {
-        if(this.handleRegex(sample, sampleNumber)){
-            const isNotRepeated = this.handleRepeatedSamples(sample, sampleNumber, 0)
-
-            if(isNotRepeated){
-                this.handleSampleStatus(sample, sampleNumber)
+    handleValidateSamples(sampleNumber) {
+        if(sampleNumber <= this.state.samples.length){
+            if(this.handleRegex(this.state.samples[sampleNumber], sampleNumber)) {
+                const isNotRepeated = this.handleRepeatedSamples(this.state.samples[sampleNumber], sampleNumber, 0)
+    
+                if(isNotRepeated) {
+                    this.handleSampleStatus(this.state.samples[sampleNumber], sampleNumber)
+                } else {
+                    this.setState({
+                        validSamples: false
+                    })
+                }
             } else {
                 this.setState({
                     validSamples: false
                 })
             }
-        } else {
-            this.setState({
-                validSamples: false
-            })
         }
     }
 
@@ -162,7 +169,7 @@ export default class HeatTest extends React.Component{
         const sample = e.target.value
 
         if(sample !== '') {
-            this.handleValidateSamples(sample, sampleNumber)
+            this.handleValidateSamples(0)
         } else {
             this.handleBlanks(sampleNumber)
         }
