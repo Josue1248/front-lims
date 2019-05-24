@@ -71,6 +71,14 @@ nav ul{
 	padding: 0 !important;
 }
 
+.display-block {
+  display: block;
+}
+
+.display-none {
+  display: none;
+}
+
 .fullHeight{
 	height: 100%;
 }
@@ -78,6 +86,10 @@ nav ul{
 .logo{
 	padding-top: 5%;
 	width: 75%;
+}
+
+.modal {
+  background: rgba(0, 0, 0, 0.6);
 }
 
 .navbar-header{
@@ -98,10 +110,6 @@ nav ul{
 	padding: 0;
 	background-color: transparent;
 	border: none;
-}
-
-#success{
-    color: #00CCC0;
 }
 
 #spinner{
