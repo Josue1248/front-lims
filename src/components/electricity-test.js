@@ -2,6 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
 
+import Modal from './modal.js';
+
 export default class ElectricityTest extends React.Component{
     constructor(props){
         super(props);
@@ -12,6 +14,7 @@ export default class ElectricityTest extends React.Component{
             messageSamples: Array(10).fill(''),
             validSamples: false,
             messageAPI: '',
+            showModal: false,
             loading: false,
         }
 
@@ -26,6 +29,7 @@ export default class ElectricityTest extends React.Component{
         this.handleOnBlur = this.handleOnBlur.bind(this);
         this.handleOperator = this.handleOperator.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.hideModal = this.hideModal.bind(this);
     }
     
     handleUpdateSamples(value, position) {
@@ -194,29 +198,40 @@ export default class ElectricityTest extends React.Component{
             samples: samples,
             states: ["Prueba de electricidad pasada", "Muestra lista para prueba de calor"]
 		})
-		.then( res=> {
-			if (res.data.message) {
+		.then( res => {
+			if (res.data.success === true) {
 				this.setState({
                     samples: Array(10).fill(''),
                     rightSamples: Array(10).fill(false),
 					messageAPI: res.data.message,
 					validSamples: false,
-					loading: false
+                    loading: false,
+                    showModal: true
+                    
 				})
 				ReactDOM.findDOMNode(this.refs.firstSample).focus();
 			} else {
 				this.setState({
-					loading: false,
+                    messageAPI: res.data.message,
+                    loading: false,
+                    showModal: true
 				})
 			}
 		})
 		.catch( () => {
-			alert('Conection Timed Out');
 			this.setState({
+                messageAPI: 'Fallo en la conexion',
+                showModal: true,
 				loading: false
 			});
 		});
     }
+
+    hideModal() {
+        this.setState({ 
+            showModal: !this.state.showModal 
+        });
+    };
 
     render(){
         const format = 'MU-##-#####'
@@ -388,22 +403,22 @@ export default class ElectricityTest extends React.Component{
                         </div>
                     </div>
                     <div className='row justify-content-center'>
-					<button
-                        type='submit'
-                        className='btn button col-md-6 col-sm-10 col-lg-3'
-                        disabled={(this.state.validSamples && /\d{5}/g.test(this.state.operator)) ? false : true}
-                        title={(this.state.validSamples && /\d{5}/g.test(this.state.operator)) ? 'La forma esta lista' : 'La forma no esta lista'}
-                    >
-                    Guardar
-                    {(this.state.loading) ? <img src='/images/spinner.gif' alt='loading' id='spinner'/> : ''}
-                    </button>
-					</div>
-					<div className='row justify-content-center'>
-					<label id='success' className={'col-lg-3 col-sm-10 text-center col-md-6  mt-3'}>
-                    {this.state.messageAPI}
-                    </label>
+                        <button
+                            type='submit'
+                            className='btn button col-md-6 col-sm-10 col-lg-3'
+                            disabled={(this.state.validSamples && /\d{5}/g.test(this.state.operator)) ? false : true}
+                            title={(this.state.validSamples && /\d{5}/g.test(this.state.operator)) ? 'La forma esta lista' : 'La forma no esta lista'}
+                        >
+                        Guardar {(this.state.loading) ? <img src='/images/spinner.gif' alt='loading' id='spinner'/> : ''}
+                        </button>
 					</div>
                 </form>
+                <Modal 
+                    showModal={this.state.showModal}
+                    handleClose={this.hideModal}
+                    title={this.state.name}
+                    message={this.state.messageAPI}
+                />
             </div>
         </div>)
     }
