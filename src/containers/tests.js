@@ -25,7 +25,7 @@ export default class Tests extends React.Component {
       }
     } = this;
 
-    return (<div className='fullHeight row m-0' >
+    return (<div className='row m-0' >
         <nav className = 'col-lg-2 col-xl-2 col-md-12 col-sm-12 fixed-top bg-color' id='menuMobilDiv'>
             <div className='breadcrumb'>
                 <div className='appLogoName bg-color w-100'>
