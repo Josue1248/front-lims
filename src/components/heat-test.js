@@ -325,7 +325,7 @@ export default class HeatTest extends React.Component{
                         <label className={warningLabels}>{this.state.messageTime}</label>
                     </div>
                     <div>
-                    <h5 className='text-center m-4'>Códigos</h5>
+                        <h5 className='text-center m-4'>Códigos</h5>
                         <div className='row justify-content-center form-inline mb-2'>
                             <label className={regularLabels}>Muestra 1:</label>
                             <input 
@@ -344,6 +344,7 @@ export default class HeatTest extends React.Component{
                             <label className={regularLabels}>Muestra 2:</label>
                             <input
                                 value={this.state.samples[1]}
+                                disabled={(/MU-\d\d-\d\d\d\d\d/.test(this.state.samples[0]))? false : true}
                                 type='text'
                                 className={inputs}
                                 name={'sample2'}
@@ -357,6 +358,7 @@ export default class HeatTest extends React.Component{
                             <label className={regularLabels}>Muestra 3:</label>
                             <input 
                                 type='text'
+                                disabled={(/MU-\d\d-\d\d\d\d\d/.test(this.state.samples[1]))? false : true}
                                 value={this.state.samples[2]}
                                 className={inputs}
                                 name={'sample3'} 
@@ -370,6 +372,7 @@ export default class HeatTest extends React.Component{
                             <label className={regularLabels}>Muestra 4:</label>
                             <input 
                                 type='text'
+                                disabled={(/MU-\d\d-\d\d\d\d\d/.test(this.state.samples[2]))? false : true}
                                 value={this.state.samples[3]}
                                 className={inputs}
                                 name={'sample4'} 
@@ -383,6 +386,7 @@ export default class HeatTest extends React.Component{
                             <label className={regularLabels}>Muestra 5:</label>
                             <input 
                                 type='text'
+                                disabled={(/MU-\d\d-\d\d\d\d\d/.test(this.state.samples[3]))? false : true}
                                 value={this.state.samples[4]}
                                 className={inputs}
                                 name={'sample5'} 
