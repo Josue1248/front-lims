@@ -8,10 +8,10 @@ export default class HeatTest extends React.Component{
         this.state={
             name: 'Prueba de calor',
             operator: '',
-            temperature: 0,
+            temperature: '',
             messageTemp: '',
             validTemp: undefined,
-            time: 0,
+            time: '',
             messageTime: '',
             validTime: undefined,
             samples: Array(5).fill(''),
@@ -175,43 +175,47 @@ export default class HeatTest extends React.Component{
         }
     }
 
-    handleTemperature(event) {
-        if(event.target.value>0) {
+    handleTemperature(e) {
+        const temp = e.target.value
+
+        if(temp.length <= 3) {
             this.setState({
-                temperature: event.target.value,
-                messageTemp: '',
-                validTemp: true,
+                temperature: temp,
             });
-        } else if(event.target.value==='') {
+        }
+
+        if (parseInt(temp) <= 0 ){
             this.setState({
-                messageTemp: 'El campo no puede estar vacio',
-                validTemp: false,
-            });
+                messageTemp: 'La temperatura no puede ser igual o menor a 0',
+                validTemp: false
+            })
         } else {
             this.setState({
-                messageTemp: 'El valor no puede ser 0',
-                validTemp: false,
-            });
+                messageTemp: '',
+                validTemp: true
+            })
         }
     }
 
-    handleTime(event) {
-        if(event.target.value>0) {
+    handleTime(e) {
+        const time = e.target.value
+
+        if(time.length <= 3) {
             this.setState({
-                time: event.target.value,
-                messageTime: '',
-                validTime: true,
+                time: time,
             });
-        } else if(event.target.value==='') {
+        }
+
+        if (parseInt(time) <= 0 ){
             this.setState({
-                messageTime: 'El campo no puede estar en blanco',
-                validTime: false,
-            });
+                messageTime: 'El tiempo no puede ser igual o menor a 0',
+                validTime: false
+            })
         } else {
             this.setState({
-                messageTime: 'El valor no puede ser 0',
-                validTime: false,
-            });
+                messageTime: '',
+                validTime: true
+            })
         }
     }
 
@@ -307,6 +311,7 @@ export default class HeatTest extends React.Component{
                         <label className={regularLabels}>Temperatura (C):</label>
                         <input 
                             type='number' 
+                            value={this.state.temperature}
                             className={inputs}
                             placeholder='###'
                             name='temperature' 
@@ -316,7 +321,9 @@ export default class HeatTest extends React.Component{
                     </div>
                     <div className='row justify-content-center form-inline mb-3'>
                         <label className={regularLabels}>Tiempo (s):</label>
-                        <input type='number' 
+                        <input
+                            type='number'
+                            value={this.state.time}
                             className={inputs}
                             placeholder='###'
                             name='time' 
