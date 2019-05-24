@@ -15,20 +15,18 @@ export default class SampleSearch extends React.Component{
         attributes: [],
       }
 
-    addSample = (e) => {
+    handleSample = (e) => {
         const sample = e.target.value
 
-        this.setState({
-            sample: sample,
-        })
+        if(sample.length <= 11) {
+            this.setState({
+                sample: sample,
+            })
+        }
+
         if(!(/MU-\d\d-\d\d\d\d\d/.test(sample)) && sample !== '') {
             this.setState({
                 messageAPI: 'Error de sintaxix',
-                validSample: false,
-            })
-        } else if(sample === '') {
-            this.setState({
-                messageAPI: '',
                 validSample: false,
             })
         } else {
@@ -70,48 +68,34 @@ export default class SampleSearch extends React.Component{
 	}
 	
     render() {
-        const {
-            addSample,
-            validateSample,
-            handleSearch,
-            state: {
-                sample,
-                validSample,
-                messageAPI,
-                sampleSearched,
-            }
-        } = this;
-
         const regularLabels = 'col-md-4 col-sm-12 col-lg-3 col-xl-3 d-block text-right'
 
-        
         return(<div className='content'>
-                    <div className='row justify-content-center form-inline m-4'>
-                       <div className='col-12 row justify-content-center form-inline mb-2'>
-                        <label className={regularLabels}>Muestra:</label>
-                        <input
-                            id='sample'
-                            type='text'
-                            name='sample'
-                            className={'col-md-6 col-sm-12 col-lg-4 col-xl-3 form-control'}
-                            placeholder='MU-##-#####'
-                            value={sample}
-                            onChange={addSample}
-                            onBlur={validateSample}
-                        />
-                        <button
-                            className='ml-1 col-md-2 col-sm-12 col-lg-2 col-xl-2 btn button'
-                            onClick={handleSearch}
-                            disabled={!validSample}
-                        >
-                        Buscar
-                        </button>
-                       </div>
+            <div className='row justify-content-center form-inline m-4'>
+                <div className='col-12 row justify-content-center form-inline mb-2'>
+                    <label className={regularLabels}>Muestra:</label>
+                    <input
+                        id='sample'
+                        type='text'
+                        name='sample'
+                        className={'col-md-6 col-sm-12 col-lg-4 col-xl-3 form-control'}
+                        placeholder='MU-##-#####'
+                        value={this.state.sample}
+                        onChange={this.handleSample}
+                    />
+                    <button
+                        className='ml-1 col-md-2 col-sm-12 col-lg-2 col-xl-2 btn button'
+                        onClick={this.handleSearch}
+                        disabled={!this.state.validSample}
+                    >
+                    Buscar
+                    </button>
+                </div>
                 <div className='row justify-content-center'>
-                    <label className={'col-lg-12 col-sm-12 col-md-12 text-center text-danger mt-3'}><p className='Danger'>{messageAPI}</p></label>
-					</div>
+                    <label className={'col-lg-12 col-sm-12 col-md-12 text-center text-danger mt-3'}><p>{this.state.messageAPI}</p></label>
+                </div>
             </div>
-            <h3 className='col-12 text-center pb-2'>{sampleSearched}</h3>
+            <h3 className='col-12 text-center pb-2'>{this.state.sampleSearched}</h3>
             <div>
 				{
 					this.state.logs && this.state.logs.length === 0 ? ('') : (
