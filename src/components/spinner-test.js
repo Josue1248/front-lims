@@ -2,6 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
 
+import Modal from './modal.js';
+
 export default class SpinnerTest extends React.Component{
     constructor(props){
         super(props);
@@ -15,6 +17,7 @@ export default class SpinnerTest extends React.Component{
             messageSamples: Array(10).fill(''),
             validSamples: undefined,
             loading: false,
+            showModal: false,
             messageAPI: ''
         }
 
@@ -30,6 +33,7 @@ export default class SpinnerTest extends React.Component{
         this.handleOperator = this.handleOperator.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleVelocity = this.handleVelocity.bind(this);
+        this.hideModal = this.hideModal.bind(this);
     }
 
     handleUpdateSamples(value, position) {
@@ -226,27 +230,37 @@ export default class SpinnerTest extends React.Component{
 		
 		})
 		.then( res=> {
-			if (res.data.message) {
+			if (res.data.success === true) {
 				this.setState({
                     samples: Array(10).fill(''),
 					messageAPI: res.data.message,
-					validSamples: false,
+                    validSamples: false,
+                    showModal: true,
 					loading: false
 				})
 				ReactDOM.findDOMNode(this.refs.firstSample).focus();
 			} else {
 				this.setState({
+                    messageAPI: res.data.message,
+                    showModal: true,
 					loading: false,
 				})
 			}
 			})
 		.catch( () => {
-			alert('Conection Timed Out');
 			this.setState({
+                messageAPI: 'Fallo en la conexion',
+                showModal: true,
 				loading: false
 			});
 		});
     }
+
+    hideModal() {
+        this.setState({ 
+            showModal: !this.state.showModal 
+        });
+    };
 
     render() {
         const format = 'MU-##-#####'
@@ -429,9 +443,6 @@ export default class SpinnerTest extends React.Component{
                             <label className={warningLabels}>{this.state.messageSamples[9]}</label>
                         </div>
                     </div>
-                    <div className='row justify-content-center'>
-                        <label className={'col-lg-3 col-sm-10 text-center col-md-6  mt-3'}><p id='success'>{this.state.messageAPI}</p></label>
-					</div>
 					<div className='row justify-content-center'>
                         <button
                             type='submit'
@@ -444,6 +455,12 @@ export default class SpinnerTest extends React.Component{
                         </button>
                     </div>
                 </form>
+                <Modal 
+                    showModal={this.state.showModal} 
+                    handleClose={this.hideModal}
+                    title={this.state.name}
+                    message={this.state.messageAPI}
+                />
             </div>
           </div>)
         }
