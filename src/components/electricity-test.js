@@ -138,8 +138,9 @@ export default class ElectricityTest extends React.Component{
 
     handleRepeatedSamples(sample, sampleNumber, index) {
         if (index <= this.state.samples.length){
-            if (sample === this.state.samples[index] && (index < sampleNumber) && sample !== ''){
+            if (sample === this.state.samples[index] && index < sampleNumber && sample !== ''){
                 this.handleSamplesMessage('Esta muestra esta repetida', sampleNumber)
+                
                 return false
             } else {
                 this.handleSamplesMessage('', sampleNumber)
@@ -263,6 +264,7 @@ export default class ElectricityTest extends React.Component{
                             <label className={regularLabels}>Muestra 2:</label>
                             <input
                                 value={this.state.samples[1]}
+                                disabled={(/MU-\d\d-\d\d\d\d\d/.test(this.state.samples[0]))? false : true}
                                 type='text'
                                 className={inputs}
                                 name={'sample2'}
@@ -276,6 +278,7 @@ export default class ElectricityTest extends React.Component{
                             <label className={regularLabels}>Muestra 3:</label>
                             <input 
                                 type='text'
+                                disabled={(/MU-\d\d-\d\d\d\d\d/.test(this.state.samples[1]))? false : true}
                                 value={this.state.samples[2]}
                                 className={inputs}
                                 name={'sample3'} 
@@ -289,6 +292,7 @@ export default class ElectricityTest extends React.Component{
                             <label className={regularLabels}>Muestra 4:</label>
                             <input 
                                 type='text'
+                                disabled={(/MU-\d\d-\d\d\d\d\d/.test(this.state.samples[2]))? false : true}
                                 value={this.state.samples[3]}
                                 className={inputs}
                                 name={'sample4'} 
@@ -302,6 +306,7 @@ export default class ElectricityTest extends React.Component{
                             <label className={regularLabels}>Muestra 5:</label>
                             <input 
                                 type='text'
+                                disabled={(/MU-\d\d-\d\d\d\d\d/.test(this.state.samples[3]))? false : true}
                                 value={this.state.samples[4]}
                                 className={inputs}
                                 name={'sample5'} 
@@ -315,6 +320,7 @@ export default class ElectricityTest extends React.Component{
                             <label className={regularLabels}>Muestra 6:</label>
                             <input 
                                 type='text'
+                                disabled={(/MU-\d\d-\d\d\d\d\d/.test(this.state.samples[4]))? false : true}
                                 value={this.state.samples[5]}
                                 className={inputs}
                                 name={'sample6'} 
@@ -328,6 +334,7 @@ export default class ElectricityTest extends React.Component{
                             <label className={regularLabels}>Muestra 7:</label>
                             <input 
                                 type='text'
+                                disabled={(/MU-\d\d-\d\d\d\d\d/.test(this.state.samples[5]))? false : true}
                                 value={this.state.samples[6]}
                                 className={inputs}
                                 name={'sample7'} 
@@ -341,6 +348,7 @@ export default class ElectricityTest extends React.Component{
                             <label className={regularLabels}>Muestra 8:</label>
                             <input 
                                 type='text'
+                                disabled={(/MU-\d\d-\d\d\d\d\d/.test(this.state.samples[6]))? false : true}
                                 value={this.state.samples[7]}
                                 className={inputs}
                                 name={'sample8'} 
@@ -354,6 +362,7 @@ export default class ElectricityTest extends React.Component{
                             <label className={regularLabels}>Muestra 9:</label>
                             <input 
                                 type='text'
+                                disabled={(/MU-\d\d-\d\d\d\d\d/.test(this.state.samples[7]))? false : true}
                                 value={this.state.samples[8]}
                                 className={inputs}
                                 name={'sample9'} 
@@ -367,6 +376,7 @@ export default class ElectricityTest extends React.Component{
                             <label className={regularLabels}>Muestra 10:</label>
                             <input 
                                 type='text'
+                                disabled={(/MU-\d\d-\d\d\d\d\d/.test(this.state.samples[8]))? false : true}
                                 value={this.state.samples[9]}
                                 className={inputs}
                                 name={'sample10'}
