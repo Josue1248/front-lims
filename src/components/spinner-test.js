@@ -30,7 +30,6 @@ export default class SpinnerTest extends React.Component{
         this.handleOperator = this.handleOperator.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleVelocity = this.handleVelocity.bind(this);
-        this.handleValidateVelocity = this.handleValidateVelocity.bind(this);
     }
 
     handleUpdateSamples(value, position) {
@@ -180,21 +179,17 @@ export default class SpinnerTest extends React.Component{
                 velocity: velocity,
             });
         }
-    }
 
-    handleValidateVelocity(e) {
-        const velocity = e.target.value
-
-        if(velocity <= 0) {
+        if (parseInt(velocity) <= 0 ){
             this.setState({
-                messageVel: 'El valor no puede ser 0',
+                messageVel: 'La velocidad no puede ser igual o menor a 0',
                 validVel: false
-            });
+            })
         } else {
             this.setState({
                 messageVel: '',
                 validVel: true
-            });
+            })
         }
     }
 
@@ -287,7 +282,6 @@ export default class SpinnerTest extends React.Component{
                             value={this.state.velocity}
                             placeholder='#####'
                             name='velocity'
-                            onBlur={this.handleValidateVelocity}
                             onChange={this.handleVelocity}
                         />
                         <label className={warningLabels}>{this.state.messageVel}</label>
