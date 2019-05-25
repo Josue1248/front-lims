@@ -1,16 +1,17 @@
 import React from 'react';
 import axios from 'axios';
 
-
 import ResponsiveTable from '../components/ResponsiveTable';
+import Modal from '../components/modal.js';
 
 
 export default class SampleSearch extends React.Component{
     state = {
         sample:'',
         validSample: false,
-        messageAPI: '',
         sampleSearched: '',
+        messageAPI: '',
+        showModal: false,
         logs: [],
         attributes: [],
       }
@@ -64,8 +65,19 @@ export default class SampleSearch extends React.Component{
                 })
             }
         })
-        .catch( () => alert('Conection Timed Out'));
-	}
+        .catch( () => {
+            this.setState({
+                messageAPI: 'Fallo en la conexion',
+                showModal: true,
+			});
+        });
+    }
+    
+    hideModal = () => {
+        this.setState({
+            showModal: !this.state.showModal 
+        });
+    };
 	
     render() {
         const regularLabels = 'col-md-4 col-sm-12 col-lg-3 col-xl-3 d-block text-right'
@@ -118,6 +130,12 @@ export default class SampleSearch extends React.Component{
 					)
 				}		
             </div>
+            <Modal 
+                showModal={this.state.showModal}
+                handleClose={this.hideModal}
+                title={'LIMS'}
+                message={this.state.messageAPI}
+            />
         </div>)
         }
     }
