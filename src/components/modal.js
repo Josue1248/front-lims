@@ -26,7 +26,7 @@ class Modal extends React.Component{
                         <h4 className="modal-title">{title}</h4>
                     </div>
                     <div className="modal-body">
-                    <p className="text-center">{message}</p>
+                        <p className="text-center m-0">{message}</p>
                     </div>
                     <div className="modal-footer">
                         <button className={"btn button"}onClick={handleClose}>Cerrar</button>
