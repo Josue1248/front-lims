@@ -89,10 +89,9 @@ export default class SpinnerTest extends React.Component{
         if(sample.replace(/\s/g,'') !== ''){
             axios.get(`http://localhost:4000/api/samples/${sample}`)
             .then(res => {
-                const state = res.data.estados.filter((element)=>{ return element.estado === 'Muestra lista para prueba de centrifugado'})
-                const sampleUsed = res.data.estados.filter((element)=>{ return element.estado === 'Muestra usada'})
+                const state = res.data.estados[res.data.estados.length - 1].estado === 'Muestra lista para prueba de centrifugado' ? true : false
 
-                if (state.length === 0 || sampleUsed === 1) {
+                if (!state) {
                     this.handleSamplesMessage('La muestra no tiene el estado requerido', sampleNumber)
                     this.setState({
                         validSamples: false
@@ -226,7 +225,7 @@ export default class SpinnerTest extends React.Component{
                 name: 'Velocidad',
                 value: velocity
             }],
-            states: ["Prueba de centrifugadora pasada", "Muestra utilizada"]
+            states: ["Prueba de centrifugadora pasada", "Muestra usada"]
 		
 		})
 		.then( res=> {
