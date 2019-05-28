@@ -85,10 +85,9 @@ export default class ElectricityTest extends React.Component{
         if(sample.replace(/\s/g,'') !== ''){
             axios.get(`http://localhost:4000/api/samples/${sample}`)
             .then(res => {
-                const state = res.data.estados.filter((element)=>{ return element.estado === 'Nueva muestra'})
-                const sampleUsed = res.data.estados.filter((element)=>{ return element.estado === 'Muestra usada'})
-
-                if (state.length === 0 || sampleUsed.length === 1) {
+                const state = res.data.estados[res.data.estados.length - 1].estado === 'Nueva muestra' ? true : false
+                
+                if (!state) {
                     this.handleSamplesMessage('La muestra no es nueva', sampleNumber)
                     this.setState({
                         validSamples: false
