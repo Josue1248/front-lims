@@ -61,10 +61,9 @@ export default class ChemistryTest extends React.Component{
     handleSampleStatus(sample) {
             axios.get(`http://localhost:4000/api/samples/${sample}`)
             .then(res => {
-                const state = res.data.estados.filter((element)=>{ return element.estado === 'Muestra lista para prueba de quimica'})
-                const sampleUsed = res.data.estados.filter((element)=>{ return element.estado === 'Muestra usada'})
+                const state = res.data.estados[res.data.estados.length - 1].estado === 'Muestra lista para prueba de quimica' ? true : false
 
-                if (state.length === 0 || sampleUsed === 1) {
+                if (!state) {
                     this.setState({
                         messageSample: 'La muestra no tiene el estado requerido',
                         validSample: false
