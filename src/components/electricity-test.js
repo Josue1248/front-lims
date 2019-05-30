@@ -100,8 +100,11 @@ export default class ElectricityTest extends React.Component{
                     this.handleValidateSamples(sampleNumber + 1)
                 }
             })
-            .catch(() => {
-                alert('Conection Timed Out');
+            .catch( () => {
+                this.setState({
+                    messageAPI: 'Fallo en la conexion',
+                    showModal: true
+                });
             });
         } else {
             return
@@ -221,7 +224,7 @@ export default class ElectricityTest extends React.Component{
 			this.setState({
                 messageAPI: 'Fallo en la conexion',
                 showModal: true,
-				loading: false
+                loading: false
 			});
 		});
     }
