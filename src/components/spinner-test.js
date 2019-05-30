@@ -105,7 +105,10 @@ export default class SpinnerTest extends React.Component{
                 }
             })
             .catch( () => {
-                alert('Conection Timed Out');
+                this.setState({
+                    messageAPI: 'Fallo en la conexion',
+                    showModal: true
+                });
             });
         } else {
             return
