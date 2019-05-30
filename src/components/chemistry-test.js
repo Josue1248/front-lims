@@ -76,7 +76,10 @@ export default class ChemistryTest extends React.Component{
                 }
             })
             .catch( () => {
-                alert('Conection Timed Out');
+                this.setState({
+                    messageAPI: 'Fallo en la conexion',
+                    showModal: true
+                });
             });
     }
 
@@ -122,15 +125,15 @@ export default class ChemistryTest extends React.Component{
     handleChemistryValidation(e) {
         const chemistry = e.target.value
 
-        if(/QU-\d\d\d\d\d/.test(chemistry)) {
+        if(/QU-\d{5}/.test(chemistry)) {
             this.setState({
                 validCh: true,
                 messageCh: '',
             })
-            axios.get(`http://localhost:4000/api/attributes/` + chemistry) 
-            .then(res => {
-                console.log(res.data)
-                if(res.data.message) {
+            
+            axios.get(`http://localhost:4000/api/attributes/${chemistry}`)
+            .then((res) => {
+                if(res.data.exists === false) {
                     this.setState({
                         messageCh: res.data.message,
                     })
@@ -140,6 +143,12 @@ export default class ChemistryTest extends React.Component{
                     })
                 }
             })
+            .catch( () => {
+                this.setState({
+                    messageAPI: 'Fallo en la conexion',
+                    showModal: true
+                });
+            });
         } else if(chemistry.trim() === '') {
             this.setState({
                 messageCh: '',
@@ -242,7 +251,7 @@ export default class ChemistryTest extends React.Component{
                                 onChange={this.handleChemistry}
                                 onBlur={this.handleChemistryValidation}
                             />
-                            <label className={warningLabels}>{this.state.messageCh}</label>
+                            <label className={'col-md-12 col-sm-12 col-lg-10 col-xl-10 text-warning text-center'}>{this.state.messageCh}</label>
                         </div>
                     <div>
                         <h5 className='text-center m-4'>Código</h5>

@@ -104,6 +104,10 @@ nav ul{
 	font-size: 0.80rem
 }
 
+.text-warning {
+	font-size: 0.80rem
+}
+
 #menuButton{
 	display: flex;
 	flex-wrap: wrap;
