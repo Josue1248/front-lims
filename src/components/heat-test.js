@@ -125,7 +125,10 @@ export default class HeatTest extends React.Component{
                 }
             })
             .catch( () => {
-                alert('Conection Timed Out');
+                this.setState({
+                    messageAPI: 'Fallo en la conexion',
+                    showModal: true
+                });
             });
         } else {
             return 
