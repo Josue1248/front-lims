@@ -60,20 +60,29 @@ export default class ChemistryTest extends React.Component{
 
     handleSampleStatus(sample) {
             axios.get(`http://localhost:4000/api/samples/${sample}`)
-            .then(res => {
+            .then((res) => {
+                const passed = res.data.estados.filter((elemento) => {return elemento.estado === 'Prueba de quimica pasada'})
                 const state = res.data.estados[res.data.estados.length - 1].estado === 'Muestra lista para prueba de quimica' ? true : false
 
-                if (!state) {
+                if (passed.length > 0) {
                     this.setState({
-                        messageSample: 'La muestra no tiene el estado requerido',
-                        validSample: false
+                        messageSample: 'La muestra ya paso por esta prueba',
+                        validSamples: false
                     })
                 } else {
-                    this.setState({
-                        messageSample: '',
-                        validSample: true
-                    })
+                    if (!state) {
+                        this.setState({
+                            messageSample: 'La muestra no tiene el estado requerido',
+                            validSample: false
+                        })
+                    } else {
+                        this.setState({
+                            messageSample: '',
+                            validSample: true
+                        })
+                    }
                 }
+
             })
             .catch( () => {
                 this.setState({
@@ -222,7 +231,7 @@ export default class ChemistryTest extends React.Component{
         const inputs = 'col-md-12 col-sm-12 col-lg-5 col-xl-5 form-control'
         const warningLabels = 'col-md-12 col-sm-12 col-lg-10 col-xl-10 text-danger text-center'
 
-        return(<div className='row justify-content-center m-0'>
+        return(<div className='row justify-content-center m-0 pb-2'>
             <div className='col-12 m-4'>
                 <h1 className='text-center'>{this.state.name}</h1>
             </div>
