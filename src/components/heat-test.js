@@ -108,20 +108,28 @@ export default class HeatTest extends React.Component{
     handleSampleStatus(sample, sampleNumber) {
         if(sample.replace(/\s/g,'') !== ''){
             axios.get(`http://localhost:4000/api/samples/${sample}`)
-            .then(res => {
+            .then((res) => {
+                const passed = res.data.estados.filter((elemento) => {return elemento.estado === 'Prueba de calor pasada'})
                 const state = res.data.estados[res.data.estados.length - 1].estado === 'Muestra lista para prueba de calor' ? true : false
 
-                if (!state) {
-                    this.handleSamplesMessage('La muestra no tiene el estado requerido', sampleNumber)
+                if (passed.length > 0) {
+                    this.handleSamplesMessage('La muestra ya paso por esta prueba', sampleNumber)
                     this.setState({
                         validSamples: false
                     })
                 } else {
-                    this.handleSamplesMessage('', sampleNumber)
-                    this.setState({
-                        validSamples: true
-                    })
-                    this.handleValidateSamples(sampleNumber + 1)
+                    if (!state) {
+                        this.handleSamplesMessage('La muestra no tiene el estado requerido', sampleNumber)
+                        this.setState({
+                            validSamples: false
+                        })
+                    } else {
+                        this.handleSamplesMessage('', sampleNumber)
+                        this.setState({
+                            validSamples: true
+                        })
+                        this.handleValidateSamples(sampleNumber + 1)
+                    }
                 }
             })
             .catch( () => {
@@ -305,7 +313,7 @@ export default class HeatTest extends React.Component{
         const handleOnBlur = this.handleOnBlur;
         const handleOnChange = this.handleSample;
 
-        return(<div className='row justify-content-center m-0'>
+        return(<div className='row justify-content-center m-0 pb-2'>
             <div className='col-12 m-4'>
                 <h1 className='text-center'>{this.state.name}</h1>
             </div>
